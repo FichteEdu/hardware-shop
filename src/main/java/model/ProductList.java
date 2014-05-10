@@ -30,8 +30,8 @@ public class ProductList extends ArrayList<Product> implements fpt.com.ProductLi
     }
 
     @Override
-    public boolean delete(Product product) {
-        return this.remove(product);
+    public boolean delete(Product p) {
+        return this.remove(p);
     }
 
 }
