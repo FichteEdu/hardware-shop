@@ -28,9 +28,11 @@ public class ControllerShop implements ActionListener {
      */
     public void link(ModelShop m, ViewShop v) {
         model = m;
-        model.addObserver(v);
-
         view = v;
+
+        model.addObserver(v);
+        view.setModel(m);
         view.addActionListener(this);
     }
+
 }

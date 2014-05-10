@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -12,8 +13,8 @@ import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import model.ProductList;
 import fpt.com.Product;
+import fpt.com.ProductList;
 
 
 @SuppressWarnings("serial")
@@ -66,7 +67,18 @@ class ProductListTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        Product p = plist.get(row);
+        Iterator<Product> it = plist.iterator();
+        Product p = null;
+
+        // Get the product at position X
+        // TOCHECK all rows covered?
+        for (int i = 0; it.hasNext(); it.next(), i++)
+            if (i == row)
+                p = it.next();
+
+        // This should not happen, so we let it fail knowingly
+        // if (p == null) return null;
+
         switch (col) {
             case 1:
                 return p.getId();
@@ -85,14 +97,17 @@ class ProductListTableModel extends AbstractTableModel {
 
 public class ViewShop extends JFrame implements Observer {
 
-    private static final long serialVersionUID = -9216593040924621252L;
-    private JTable            productTable;
+    private static final long     serialVersionUID = -9216593040924621252L;
+    private JTable                productTable;
+    private ProductListTableModel tableModel;
 
     public ViewShop() {
         setTitle("ViewShop");
+        setSize(450, 300);
 
         productTable = new JTable();
-        productTable.setModel(new ProductListTableModel());
+        tableModel = new ProductListTableModel();
+        productTable.setModel(tableModel);
         getContentPane().add(productTable, BorderLayout.CENTER);
     }
 
@@ -130,5 +145,9 @@ public class ViewShop extends JFrame implements Observer {
                 ((JButton) child).addActionListener(al);
             }
         }
+    }
+
+    public void setModel(ProductList m) {
+        tableModel.setPlist(m);
     }
 }
