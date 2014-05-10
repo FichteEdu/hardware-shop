@@ -1,8 +1,9 @@
-package model;
+package main;
 
 import java.util.Iterator;
 import java.util.Observable;
 
+import model.ProductList;
 import fpt.com.Product;
 
 
@@ -45,6 +46,9 @@ public class ModelShop extends Observable implements fpt.com.ProductList {
         return plist.findProductByName(name);
     }
 
+    /**
+     * Signal that we changed something and notify our observers.
+     */
     private void changed() {
         hasChanged();
         notifyObservers();
