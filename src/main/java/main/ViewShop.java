@@ -1,9 +1,13 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.event.ActionListener;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -97,4 +101,34 @@ public class ViewShop extends JFrame implements Observer {
         productTable.repaint();
     }
 
+    /**
+     * Recursively iterate through all containers and add `action` as action
+     * listener to all buttons.
+     * 
+     * @param action
+     *            The listener to add
+     */
+    public void addActionListener(ActionListener al) {
+        addActionListener(this, al);
+    }
+
+    /**
+     * Recursively iterate through all containers and add `action` as action
+     * listener to all buttons.
+     * 
+     * @param c
+     *            Container to iterate through
+     * @param al
+     *            The listener to add
+     */
+    private void addActionListener(Container c, ActionListener al) {
+        for (Component child : c.getComponents()) {
+
+            if (child instanceof Container)
+                addActionListener((Container) child, al);
+            if (child instanceof JButton) {
+                ((JButton) child).addActionListener(al);
+            }
+        }
+    }
 }
