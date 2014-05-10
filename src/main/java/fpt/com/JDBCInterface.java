@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 
 public interface JDBCInterface {
+
     void insert(Product product) throws SQLException;
 
     long insert(String name, double price, int quantity) throws SQLException;

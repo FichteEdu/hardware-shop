@@ -14,6 +14,7 @@ import fpt.com.Product;
 
 
 public class ListProductRenderer implements ListCellRenderer<Product> {
+
     // verwendbar mit JList<Product>.setCellRenderer(new ListProductRenderer());
     // methode
 

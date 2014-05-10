@@ -13,6 +13,7 @@ import fpt.com.Product;
 
 
 public class OrderRenderer implements ListCellRenderer<Order> {
+
     // verwendbar mit JList<Product>.setCellRenderer(new OrderRenderer());
     // methode
 
