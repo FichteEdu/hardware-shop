@@ -1,4 +1,4 @@
-package main;
+package shop;
 
 import java.util.Iterator;
 import java.util.Observable;

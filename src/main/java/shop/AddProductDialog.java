@@ -1,4 +1,4 @@
-package main;
+package shop;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,9 +63,8 @@ public class AddProductDialog extends JFrame {
                     // We're done now, so just dispose
                     dispose();
                 } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(AddProductDialog.this,
-                            "Yout number is not valid.", "Invalid input", JOptionPane.OK_OPTION);
-                    return;
+                    JOptionPane.showMessageDialog(null, "Your number is not valid.",
+                            "Invalid input", JOptionPane.OK_OPTION);
                 }
 
             }
@@ -80,7 +79,7 @@ public class AddProductDialog extends JFrame {
                 dispose();
             }
         });
-        
+
         setVisible(true);
     }
 

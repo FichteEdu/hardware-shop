@@ -1,8 +1,8 @@
 
 
-import main.ControllerShop;
-import main.ModelShop;
-import main.ViewShop;
+import shop.ControllerShop;
+import shop.ModelShop;
+import shop.ViewShop;
 
 public class Main {
 
