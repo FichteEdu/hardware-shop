@@ -25,21 +25,19 @@ public class ListProductRenderer implements ListCellRenderer<Product> {
 
 		String name = product.getName();
 		Box box = Box.createVerticalBox();
-		JLabel l = new JLabel(name);
 		JLabel p = new JLabel("Price: " + product.getPrice());
 		JLabel q = new JLabel("Quantity: " + product.getQuantity());
 
-		Font f = l.getFont();
+		Font f = p.getFont();
 		f = f.deriveFont(Font.ITALIC, f.getSize() * 0.8f);
 		p.setFont(f);
 		q.setFont(f);
 
-		box.add(l);
 		box.add(p);
 		box.add(q);
 
 		// Create titled border (with different color)
-		Color lineColor = isSelected ? Color.BLUE : Color.BLACK;
+		Color lineColor = isSelected ? Color.RED : Color.BLACK;
 		Border border = BorderFactory.createLineBorder(lineColor);
 		box.setBorder(BorderFactory.createTitledBorder(border, name));
 		return box;

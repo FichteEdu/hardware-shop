@@ -2,12 +2,8 @@ package shop;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.JButton;
-
-import fpt.com.Product;
 
 
 public class ControllerShop implements ActionListener {
@@ -28,14 +24,7 @@ public class ControllerShop implements ActionListener {
 
 		switch (btn.getText()) {
 			case "Add":
-				new AddProductDialog(new Observer() {
-
-					@Override
-					public void update(Observable o, Object arg) {
-						if (arg != null)
-							model.add((Product) arg);
-					}
-				});
+				model.add(view.getNewProduct());
 				break;
 			case "Delete (selected)":
 				model.delete(view.getSelected());

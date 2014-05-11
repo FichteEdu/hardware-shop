@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.TextField;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
@@ -13,6 +14,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -26,12 +28,12 @@ import fpt.com.ProductList;
 @SuppressWarnings("serial")
 public class ViewShop extends JFrame implements Observer {
 
-	private JList<Product>	productJList;
-	private ProductList		plist;
+	private JList<Product>		productJList;
+	private ProductList			plist;
 
-	private TextField		tfName;
-	private TextField		tfPrice;
-	private TextField		tfQuantity;
+	private TextField			tfName;
+	private JFormattedTextField	ftfPrice;
+	private JFormattedTextField	ftfQuantity;
 
 	public ViewShop() {
 		setTitle("ViewShop");
@@ -46,13 +48,24 @@ public class ViewShop extends JFrame implements Observer {
 		getContentPane().add(sidePanel, BorderLayout.EAST);
 		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
 
+		// Create text fields and formatters
 		tfName = new TextField();
-		tfPrice = new TextField();
-		tfQuantity = new TextField();
-		sidePanel.add(wrapTextField(tfName, "Name"));
-		sidePanel.add(wrapTextField(tfPrice, "Price"));
-		sidePanel.add(wrapTextField(tfQuantity, "Quantity"));
 
+		NumberFormat fmt = NumberFormat.getNumberInstance();
+		fmt.setMinimumFractionDigits(2);
+		fmt.setMaximumFractionDigits(2);
+		ftfPrice = new JFormattedTextField(fmt);
+
+		fmt = NumberFormat.getNumberInstance();
+		fmt.setMaximumFractionDigits(0);
+		ftfQuantity = new JFormattedTextField(fmt);
+
+		// Create input boxes
+		sidePanel.add(wrapTextField(tfName, "Name"));
+		sidePanel.add(wrapTextField(ftfPrice, "Price"));
+		sidePanel.add(wrapTextField(ftfQuantity, "Quantity"));
+
+		// Buttons panel
 		Box buttons = Box.createHorizontalBox();
 		buttons.add(new JButton("Add"));
 		buttons.add(new JButton("Delete (selected)"));
@@ -149,10 +162,21 @@ public class ViewShop extends JFrame implements Observer {
 		return arr;
 	}
 
-	private Component wrapTextField(TextField tf, String title) {
+	private Component wrapTextField(Component c, String title) {
 		Box box = Box.createHorizontalBox();
-		box.add(tf);
+		box.add(c);
 		box.setBorder(BorderFactory.createTitledBorder(title));
 		return box;
+	}
+
+	public Product getNewProduct() {
+		String name = tfName.getText();
+		if (name.isEmpty())
+			return null;
+		
+		double price = ((Number) ftfPrice.getValue()).doubleValue();
+		int quantity = ((Number) ftfQuantity.getValue()).intValue();
+		// TODO Auto-generated method stub
+		return new model.Product(0, name, price, quantity);
 	}
 }
