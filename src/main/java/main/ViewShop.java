@@ -138,7 +138,6 @@ public class ViewShop extends JFrame implements Observer {
 
     @Override
     public void update(Observable arg0, Object arg1) {
-        System.out.println("repaint");
         productTable.repaint();
     }
 
