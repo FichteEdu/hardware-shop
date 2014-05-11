@@ -26,133 +26,133 @@ import fpt.com.ProductList;
 @SuppressWarnings("serial")
 public class ViewShop extends JFrame implements Observer {
 
-    private JList<Product> productJList;
-    private ProductList    plist;
+	private JList<Product>	productJList;
+	private ProductList		plist;
 
-    private TextField      tfName;
-    private TextField      tfPrice;
-    private TextField      tfQuantity;
+	private TextField		tfName;
+	private TextField		tfPrice;
+	private TextField		tfQuantity;
 
-    public ViewShop() {
-        setTitle("ViewShop");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(450, 300);
+	public ViewShop() {
+		setTitle("ViewShop");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setSize(450, 300);
 
-        productJList = new JList<Product>();
-        productJList.setCellRenderer(new ListProductRenderer());
-        getContentPane().add(new JScrollPane(productJList), BorderLayout.CENTER);
+		productJList = new JList<Product>();
+		productJList.setCellRenderer(new ListProductRenderer());
+		getContentPane().add(new JScrollPane(productJList), BorderLayout.CENTER);
 
-        JPanel sidePanel = new JPanel();
-        getContentPane().add(sidePanel, BorderLayout.EAST);
-        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+		JPanel sidePanel = new JPanel();
+		getContentPane().add(sidePanel, BorderLayout.EAST);
+		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
 
-        tfName = new TextField();
-        tfPrice = new TextField();
-        tfQuantity = new TextField();
-        sidePanel.add(wrapTextField(tfName, "Name"));
-        sidePanel.add(wrapTextField(tfPrice, "Price"));
-        sidePanel.add(wrapTextField(tfQuantity, "Quantity"));
-        
-        Box buttons = Box.createHorizontalBox();
-        buttons.add(new JButton("Add"));
-        buttons.add(new JButton("Delete (selected)"));
-        sidePanel.add(buttons);
-    }
+		tfName = new TextField();
+		tfPrice = new TextField();
+		tfQuantity = new TextField();
+		sidePanel.add(wrapTextField(tfName, "Name"));
+		sidePanel.add(wrapTextField(tfPrice, "Price"));
+		sidePanel.add(wrapTextField(tfQuantity, "Quantity"));
 
-    /**
-     * Recursively iterate through all containers and add `action` as action
-     * listener to all buttons.
-     * 
-     * @param action
-     *            The listener to add
-     */
-    public void addActionListener(ActionListener al) {
-        addActionListener(this, al);
-    }
+		Box buttons = Box.createHorizontalBox();
+		buttons.add(new JButton("Add"));
+		buttons.add(new JButton("Delete (selected)"));
+		sidePanel.add(buttons);
+	}
 
-    /**
-     * Recursively iterate through all containers and add `action` as action
-     * listener to all buttons.
-     * 
-     * @param c
-     *            Container to iterate through
-     * @param al
-     *            The listener to add
-     */
-    private void addActionListener(Container c, ActionListener al) {
-        for (Component child : c.getComponents()) {
-            if (child instanceof Container)
-                addActionListener((Container) child, al);
-            if (child instanceof JButton) {
-                ((JButton) child).addActionListener(al);
-            }
-        }
-    }
+	/**
+	 * Recursively iterate through all containers and add `action` as action
+	 * listener to all buttons.
+	 * 
+	 * @param action
+	 *            The listener to add
+	 */
+	public void addActionListener(ActionListener al) {
+		addActionListener(this, al);
+	}
 
-    /**
-     * Set the ProductList to display and work on.
-     * 
-     * @param plist
-     *            ^
-     */
-    public void setModel(ProductList plist) {
-        this.plist = plist;
-        productJList.setListData(toArray());
-    }
+	/**
+	 * Recursively iterate through all containers and add `action` as action
+	 * listener to all buttons.
+	 * 
+	 * @param c
+	 *            Container to iterate through
+	 * @param al
+	 *            The listener to add
+	 */
+	private void addActionListener(Container c, ActionListener al) {
+		for (Component child : c.getComponents()) {
+			if (child instanceof Container)
+				addActionListener((Container) child, al);
+			if (child instanceof JButton) {
+				((JButton) child).addActionListener(al);
+			}
+		}
+	}
 
-    public int getSelectedIndex() {
-        return productJList.getSelectedIndex();
-    }
+	/**
+	 * Set the ProductList to display and work on.
+	 * 
+	 * @param plist
+	 *            ^
+	 */
+	public void setModel(ProductList plist) {
+		this.plist = plist;
+		productJList.setListData(toArray());
+	}
 
-    /**
-     * Return the currently selected product in the table.
-     * 
-     * @return ^
-     */
-    public Product getSelected() {
-        return getProduct(productJList.getSelectedIndex());
-    }
+	public int getSelectedIndex() {
+		return productJList.getSelectedIndex();
+	}
 
-    @Override
-    public void update(Observable o, Object arg) {
-        productJList.setListData(toArray());
-    }
+	/**
+	 * Return the currently selected product in the table.
+	 * 
+	 * @return ^
+	 */
+	public Product getSelected() {
+		return getProduct(productJList.getSelectedIndex());
+	}
 
-    /**
-     * Get the product at position i in the ProductList.
-     * 
-     * @param i
-     * @return ^
-     */
-    private Product getProduct(int i) {
-        Iterator<Product> it = plist.iterator();
+	@Override
+	public void update(Observable o, Object arg) {
+		productJList.setListData(toArray());
+	}
 
-        // Get the product at position X
-        for (int j = 0; it.hasNext(); it.next(), j++)
-            if (j == i)
-                return it.next();
+	/**
+	 * Get the product at position i in the ProductList.
+	 * 
+	 * @param i
+	 * @return ^
+	 */
+	private Product getProduct(int i) {
+		Iterator<Product> it = plist.iterator();
 
-        return null;
-    }
+		// Get the product at position X
+		for (int j = 0; it.hasNext(); it.next(), j++)
+			if (j == i)
+				return it.next();
 
-    /**
-     * Convert the saved ProductList to an array for JList
-     * 
-     * @return ^
-     */
-    private Product[] toArray() {
-        Product[] arr = new Product[plist.size()];
-        Iterator<Product> it = plist.iterator();
-        int i = 0;
-        while (it.hasNext())
-            arr[i++] = it.next();
-        return arr;
-    }
+		return null;
+	}
 
-    private Component wrapTextField(TextField tf, String title) {
-        Box box = Box.createHorizontalBox();
-        box.add(tf);
-        box.setBorder(BorderFactory.createTitledBorder(title));
-        return box;
-    }
+	/**
+	 * Convert the saved ProductList to an array for JList
+	 * 
+	 * @return ^
+	 */
+	private Product[] toArray() {
+		Product[] arr = new Product[plist.size()];
+		Iterator<Product> it = plist.iterator();
+		int i = 0;
+		while (it.hasNext())
+			arr[i++] = it.next();
+		return arr;
+	}
+
+	private Component wrapTextField(TextField tf, String title) {
+		Box box = Box.createHorizontalBox();
+		box.add(tf);
+		box.setBorder(BorderFactory.createTitledBorder(title));
+		return box;
+	}
 }
