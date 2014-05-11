@@ -2,20 +2,27 @@ package model;
 
 public class Product implements fpt.com.Product {
 
-	private static final long	serialVersionUID	= 1001L;
+	private static final long			serialVersionUID	= 1001L;
 
-	private long				id;
-	private String				name;
-	private double				price;
-	private int					quantity;
+	private static final IDGenerator	idgen				= new IDGenerator();
+
+	private long						id;
+	private String						name;
+	private double						price;
+	private int							quantity;
 
 	// TOCHECK useful?
 	public Product() {
-		this(0, "", 0, 0);
+		this("", 0, 0);
 	}
 
-	public Product(	int id, String name, double price, int quantity) {
-		setId(id);
+	public Product(	String name, double price, int quantity) {
+		try {
+			setId(idgen.generate());
+		} catch (Exception e) {
+			e.printStackTrace();
+			setId(0);
+		}
 		setName(name);
 		setPrice(price);
 		setQuantity(quantity);

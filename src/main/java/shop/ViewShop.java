@@ -177,6 +177,6 @@ public class ViewShop extends JFrame implements Observer {
 		double price = ((Number) ftfPrice.getValue()).doubleValue();
 		int quantity = ((Number) ftfQuantity.getValue()).intValue();
 		// TODO Auto-generated method stub
-		return new model.Product(0, name, price, quantity);
+		return new model.Product(name, price, quantity);
 	}
 }
