@@ -117,6 +117,7 @@ public class ViewShop extends JFrame implements Observer {
 
     public ViewShop() {
         setTitle("ViewShop");
+        setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
         setSize(450, 300);
 
         productTable = new JTable();
