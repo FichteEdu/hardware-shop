@@ -24,6 +24,7 @@ public class AddProductDialog extends JFrame {
 
     public AddProductDialog(final Observer observer) {
         setTitle("Add Product");
+        setSize(450, 300);
         getContentPane().setLayout(new MigLayout("", "[right][grow]", "[][][][]"));
 
         JLabel lblName = new JLabel("Name:");
@@ -79,6 +80,8 @@ public class AddProductDialog extends JFrame {
                 dispose();
             }
         });
+        
+        setVisible(true);
     }
 
 }

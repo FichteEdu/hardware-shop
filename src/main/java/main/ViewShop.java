@@ -74,13 +74,13 @@ class ProductListTableModel extends AbstractTableModel {
         Product p = getProduct(row);
 
         switch (col) {
-            case 1:
+            case 0:
                 return p.getId();
-            case 2:
+            case 1:
                 return p.getName();
-            case 3:
+            case 2:
                 return p.getPrice();
-            case 4:
+            case 3:
                 return p.getQuantity();
             default:
                 System.out.println("Invalid column number");
@@ -138,6 +138,7 @@ public class ViewShop extends JFrame implements Observer {
 
     @Override
     public void update(Observable arg0, Object arg1) {
+        System.out.println("repaint");
         productTable.repaint();
     }
 
