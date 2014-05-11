@@ -2,10 +2,10 @@ package model;
 
 public class IDGenerator {
 
-	private int	lastID	= 0;
-	private static final int MAX_ID = 999999;
+	private long				lastID	= 0;
+	private static final long	MAX_ID	= 999999;
 
-	public int generate() throws Exception {
+	public long generate() throws Exception {
 		if (lastID == MAX_ID)
 			throw new Exception("Reached maximum ID, no further generations possible.");
 		return lastID++;
