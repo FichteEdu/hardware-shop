@@ -10,6 +10,7 @@ import java.util.Observer;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
@@ -98,7 +99,6 @@ class ProductListTableModel extends AbstractTableModel {
         Iterator<Product> it = plist.iterator();
 
         // Get the product at position X
-        // TOCHECK
         for (int j = 0; it.hasNext(); it.next(), j++)
             if (j == i)
                 return it.next();
@@ -123,7 +123,7 @@ public class ViewShop extends JFrame implements Observer {
         productTable = new JTable();
         tableModel = new ProductListTableModel();
         productTable.setModel(tableModel);
-        getContentPane().add(productTable, BorderLayout.CENTER);
+        getContentPane().add(new JScrollPane(productTable), BorderLayout.CENTER);
 
         JPanel panel = new JPanel();
         getContentPane().add(panel, BorderLayout.SOUTH);
@@ -138,7 +138,7 @@ public class ViewShop extends JFrame implements Observer {
 
     @Override
     public void update(Observable arg0, Object arg1) {
-        productTable.repaint();
+        tableModel.fireTableDataChanged();
     }
 
     /**
@@ -163,7 +163,6 @@ public class ViewShop extends JFrame implements Observer {
      */
     private void addActionListener(Container c, ActionListener al) {
         for (Component child : c.getComponents()) {
-
             if (child instanceof Container)
                 addActionListener((Container) child, al);
             if (child instanceof JButton) {
