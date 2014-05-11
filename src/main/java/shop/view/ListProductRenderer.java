@@ -3,11 +3,13 @@ package shop.view;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.Border;
 
@@ -16,30 +18,37 @@ import fpt.com.Product;
 
 public class ListProductRenderer implements ListCellRenderer<Product> {
 
-	// verwendbar mit JList<Product>.setCellRenderer(new ListProductRenderer());
-	// methode
+	// Precompose border objects because we need them over and over again
+	private static final Border	border	= BorderFactory.createLineBorder(Color.BLACK),
+			selectedBorder = BorderFactory.createLineBorder(Color.RED);
 
 	@Override
 	public Component getListCellRendererComponent(JList<? extends Product> list, Product product,
 			int index, boolean isSelected, boolean cellHasFocus) {
 
 		String name = product.getName();
-		Box box = Box.createVerticalBox();
+		// JComponent panel = Box.createHorizontalBox();
+		JComponent panel = new JPanel(new GridLayout(0, 3));
+
+		JLabel id = new JLabel("ID: " + product.getId());
 		JLabel p = new JLabel("Price: " + product.getPrice());
 		JLabel q = new JLabel("Quantity: " + product.getQuantity());
 
+		// Adjust font
 		Font f = p.getFont();
 		f = f.deriveFont(Font.ITALIC, f.getSize() * 0.8f);
+		id.setFont(f);
 		p.setFont(f);
 		q.setFont(f);
 
-		box.add(p);
-		box.add(q);
+		// Add labels
+		panel.add(id);
+		panel.add(p);
+		panel.add(q);
 
 		// Create titled border (with different color)
-		Color lineColor = isSelected ? Color.RED : Color.BLACK;
-		Border border = BorderFactory.createLineBorder(lineColor);
-		box.setBorder(BorderFactory.createTitledBorder(border, name));
-		return box;
+		Border lineBorder = isSelected ? selectedBorder : border;
+		panel.setBorder(BorderFactory.createTitledBorder(lineBorder, name));
+		return panel;
 	}
 }
