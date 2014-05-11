@@ -5,20 +5,20 @@ public class Product implements fpt.com.Product {
     private static final long serialVersionUID = 1001L;
 
     private long              id;
+    private String            name;
     private double            price;
     private int               quantity;
-    private String            name;
 
     // TOCHECK useful?
     public Product() {
-        this(0, 0, 0, "");
+        this(0, "", 0, 0);
     }
 
-    public Product(int id, int price, int quantity, String name) {
+    public Product(int id, String name, double price, int quantity) {
         setId(id);
+        setName(name);
         setPrice(price);
         setQuantity(quantity);
-        setName(name);
     }
 
     @Override
