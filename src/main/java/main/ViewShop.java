@@ -16,6 +16,10 @@ import javax.swing.table.AbstractTableModel;
 import fpt.com.Product;
 import fpt.com.ProductList;
 
+import javax.swing.JPanel;
+
+import java.awt.FlowLayout;
+
 
 @SuppressWarnings("serial")
 class ProductListTableModel extends AbstractTableModel {
@@ -67,17 +71,7 @@ class ProductListTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int col) {
-        Iterator<Product> it = plist.iterator();
-        Product p = null;
-
-        // Get the product at position X
-        // TOCHECK all rows covered?
-        for (int i = 0; it.hasNext(); it.next(), i++)
-            if (i == row)
-                p = it.next();
-
-        // This should not happen, so we let it fail knowingly
-        // if (p == null) return null;
+        Product p = getProduct(row);
 
         switch (col) {
             case 1:
@@ -88,7 +82,27 @@ class ProductListTableModel extends AbstractTableModel {
                 return p.getPrice();
             case 4:
                 return p.getQuantity();
+            default:
+                System.out.println("Invalid column number");
         }
+        return null;
+    }
+
+    /**
+     * Get the product at position i in {@code plist} using an iterator.
+     * 
+     * @param i
+     * @return The Product at that position or null.
+     */
+    Product getProduct(int i) {
+        Iterator<Product> it = plist.iterator();
+
+        // Get the product at position X
+        // TOCHECK
+        for (int j = 0; it.hasNext(); it.next(), j++)
+            if (j == i)
+                return it.next();
+
         return null;
     }
 
@@ -109,6 +123,16 @@ public class ViewShop extends JFrame implements Observer {
         tableModel = new ProductListTableModel();
         productTable.setModel(tableModel);
         getContentPane().add(productTable, BorderLayout.CENTER);
+
+        JPanel panel = new JPanel();
+        getContentPane().add(panel, BorderLayout.SOUTH);
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+
+        JButton btnNewButton = new JButton("Add");
+        panel.add(btnNewButton);
+
+        JButton btnNewButton_1 = new JButton("Delete (selected)");
+        panel.add(btnNewButton_1);
     }
 
     @Override
@@ -149,5 +173,17 @@ public class ViewShop extends JFrame implements Observer {
 
     public void setModel(ProductList m) {
         tableModel.setPlist(m);
+    }
+
+    public int getSelectedIndex() {
+        return productTable.getSelectedRow();
+    }
+
+    /**
+     * Return the currently selected product in the table.
+     * @return ^
+     */
+    public Product getSelected() {
+        return tableModel.getProduct(productTable.getSelectedRow());
     }
 }
