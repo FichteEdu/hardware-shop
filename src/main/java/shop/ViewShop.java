@@ -19,6 +19,9 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import shop.view.ListProductRenderer;
 import fpt.com.Product;
@@ -34,6 +37,12 @@ public class ViewShop extends JFrame implements Observer {
 	private TextField			tfName;
 	private JFormattedTextField	ftfPrice;
 	private JFormattedTextField	ftfQuantity;
+	
+	private JMenuBar			jMenuBar;
+	private JMenu				serStrat;
+	private JMenuItem			binarySer;
+	private JMenuItem			beansSer;
+	private JMenuItem			xstreamSer;
 
 	public ViewShop() {
 		setTitle("ViewShop");
@@ -70,6 +79,20 @@ public class ViewShop extends JFrame implements Observer {
 		buttons.add(new JButton("Add"));
 		buttons.add(new JButton("Delete (selected)"));
 		sidePanel.add(buttons);
+		
+		// JMenuBar
+		jMenuBar = new JMenuBar();
+		serStrat = new JMenu("Serialization Strategy");
+		binarySer = new JMenuItem("binary");
+		beansSer = new JMenuItem("beans");
+		xstreamSer = new JMenuItem("xstream");
+		
+		serStrat.add(binarySer);
+		serStrat.add(beansSer);
+		serStrat.add(xstreamSer);
+		jMenuBar.add(serStrat);
+		setJMenuBar(jMenuBar);
+		
 	}
 
 	/**
