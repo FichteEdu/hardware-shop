@@ -15,7 +15,7 @@ import fpt.com.Product;
 public class OrderRenderer implements ListCellRenderer<Order> {
 
 	// Mainly from received Example
-	
+
 	// verwendbar mit JList<Product>.setCellRenderer(new OrderRenderer());
 	// methode
 
@@ -28,12 +28,12 @@ public class OrderRenderer implements ListCellRenderer<Order> {
 		// also nichts besonderes
 		Box box = Box.createVerticalBox();
 		JLabel label = null;
-		if (order.getQuantity()==1){
+		if (order.getQuantity() == 1) {
 			label = new JLabel("Order with " + order.getQuantity() + " Item for "
 					+ String.format("%5.2f", order.getSum()));
 		} else {
 			label = new JLabel("Order with " + order.getQuantity() + " Items for "
-				+ String.format("%5.2f", order.getSum()));
+					+ String.format("%5.2f", order.getSum()));
 		}
 		box.add(label);
 		StringBuilder bb = new StringBuilder();

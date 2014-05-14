@@ -10,7 +10,7 @@ import fpt.com.Product;
 public class ModelCustomer extends Observable implements fpt.com.ProductList {
 
 	private static final long	serialVersionUID	= 4001L;
-	private ProductList			cartlist				= new ProductList();
+	private ProductList			cartlist			= new ProductList();
 
 	@Override
 	public Iterator<Product> iterator() {

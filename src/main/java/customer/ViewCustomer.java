@@ -20,24 +20,24 @@ import customer.view.TableProductRenderer;
 
 public class ViewCustomer extends JFrame implements Observer {
 
-	private static final long	serialVersionUID	= 8575042175879061593L;
-	
-	private model.ProductList	plist;
-	private JPanel				right;
-	private JTable				ProductTable;
-	
-	private JList<Order>		cartJList;
-	
-	private TableProductRenderer tr = new TableProductRenderer();
+	private static final long		serialVersionUID	= 8575042175879061593L;
 
-	//TOCHECK sinnvoll?
+	private model.ProductList		plist;
+	private JPanel					right;
+	private JTable					ProductTable;
+
+	private JList<Order>			cartJList;
+
+	private TableProductRenderer	tr					= new TableProductRenderer();
+
+	// TOCHECK sinnvoll?
 	public ViewCustomer() {
 	}
-	
+
 	public ViewCustomer(ModelShop m) {
 		setTitle("ViewCustomer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(700,500);
+		setSize(700, 500);
 		setResizable(false);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		setLocation(500, 0);
@@ -49,19 +49,18 @@ public class ViewCustomer extends JFrame implements Observer {
 		cartJList = new JList<Order>();
 		cartJList.setCellRenderer(new OrderRenderer());
 		add(new JScrollPane(cartJList));
-		
+
 		ProductTable = tr.ProductTable(plist);
-		right.add(new JScrollPane(ProductTable, 
-	            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-	            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER));
+		right.add(new JScrollPane(ProductTable, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER));
 		right.add(new JButton("Buy"));
 		add(right);
 	}
-	
-	//TODO
+
+	// TODO
 	@Override
 	public void update(Observable o, Object arg) {
-		//ProductTable.updateUI();
+		// ProductTable.updateUI();
 	}
 
 }
