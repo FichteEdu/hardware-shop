@@ -53,5 +53,9 @@ public class ModelShop extends Observable implements fpt.com.ProductList {
 		setChanged();
 		notifyObservers();
 	}
-
+	
+	public ProductList getProductList(){
+		return plist;
+	}
+	
 }
