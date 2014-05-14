@@ -62,8 +62,9 @@ public class ControllerShop implements ActionListener {
 				case "load":
 					load();
 					break;
-				default: // Comming
+				default: 
 					System.out.println("Unknown Action for button: " + itm.getText());
+					break;
 			}
 		} else {
 			System.out.println("Error: Input of unknown source.");
