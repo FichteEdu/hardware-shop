@@ -43,7 +43,7 @@ public class BinaryStrategy implements fpt.com.SerializableStrategy {
 				e.printStackTrace();
 			}
 		}
-		try (FileOutputStream fos = new FileOutputStream("products.ser"); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+		try {
 			oos.writeObject(obj); // write Object
 			oos.flush();
 		} catch (IOException e) {
