@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 
 
 public class ControllerShop implements ActionListener {
@@ -20,18 +21,35 @@ public class ControllerShop implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JButton btn = (JButton) e.getSource();
+		
+		if (e.getSource() instanceof JButton) {
+			JButton btn = (JButton) e.getSource();
 
-		switch (btn.getText()) {
-			case "Add":
-				model.add(view.getNewProduct());
-				break;
-			case "Delete (selected)":
-				model.delete(view.getSelected());
-				break;
-			default:
-				System.out.println("Unknown Action for button: " + btn.getText());
+			switch (btn.getText()) {
+				case "Add":
+					model.add(view.getNewProduct());
+					break;
+				case "Delete (selected)":
+					model.delete(view.getSelected());
+					break;
+				default:
+					System.out.println("Unknown Action for button: " + btn.getText());
+			}
+		} else if (e.getSource() instanceof JMenuItem) {
+			switch (((JMenuItem) e.getSource()).getText()) {
+				case "Bin": model.setStrat((byte) 0);
+					break;
+				case "beans": model.setStrat((byte) 1);
+					break;
+				case "xstream": model.setStrat((byte) 2);
+					break;
+				default: //Comming
+					break;				
+			}
+		} else {
+			System.out.println("Error: Input of unknown source.");
 		}
+		
 	}
 
 	/**
