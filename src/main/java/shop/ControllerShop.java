@@ -104,6 +104,11 @@ public class ControllerShop implements ActionListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Error while loading from file.");
+		} finally {
+			try {
+				binaryStrat.close();
+			} catch (IOException e) {
+			}
 		}
 	}
 
