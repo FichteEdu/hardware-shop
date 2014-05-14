@@ -40,9 +40,12 @@ public class ViewShop extends JFrame implements Observer {
 	
 	private JMenuBar			jMenuBar;
 	private JMenu				serStrat;
+	private JMenu				loadSaveStrat;
 	private JMenuItem			binarySer;
 	private JMenuItem			beansSer;
 	private JMenuItem			xstreamSer;
+	private JMenuItem			loadSer;
+	private JMenuItem			saveSer;
 
 	public ViewShop() {
 		setTitle("ViewShop");
@@ -82,8 +85,8 @@ public class ViewShop extends JFrame implements Observer {
 		
 		// JMenuBar
 		jMenuBar = new JMenuBar();
-		serStrat = new JMenu("Serialization Strategy");
-		binarySer = new JMenuItem("binary");
+		serStrat = new JMenu("Serialization");
+		binarySer = new JMenuItem("Bin");
 		beansSer = new JMenuItem("beans");
 		xstreamSer = new JMenuItem("xstream");
 		
@@ -91,6 +94,15 @@ public class ViewShop extends JFrame implements Observer {
 		serStrat.add(beansSer);
 		serStrat.add(xstreamSer);
 		jMenuBar.add(serStrat);
+		
+		loadSaveStrat = new JMenu("Load/Save");
+		loadSer = new JMenuItem("load");
+		saveSer = new JMenuItem("save");
+		
+		loadSaveStrat.add(loadSer);
+		loadSaveStrat.add(saveSer);
+		
+		jMenuBar.add(loadSaveStrat);
 		setJMenuBar(jMenuBar);
 		
 	}
