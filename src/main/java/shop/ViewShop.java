@@ -129,10 +129,20 @@ public class ViewShop extends JFrame implements Observer {
 	 */
 	private void addActionListener(Container c, ActionListener al) {
 		for (Component child : c.getComponents()) {
-			if (child instanceof Container)
+			if (child instanceof Container) {
 				addActionListener((Container) child, al);
+				if (child instanceof JMenu) { 				//JMenuItems scheinen beim Aufruf von getComponents auf JMenus 
+					JMenu toOpen = (JMenu) child;			//nicht gefunden zu werden, deswegen der Workaround
+					for (int i = 0; i < toOpen.getItemCount(); i++) {
+						toOpen.getItem(i).addActionListener(al);
+					}
+				}
+			}
 			if (child instanceof JButton) {
 				((JButton) child).addActionListener(al);
+			}
+			if (child instanceof JMenuItem) {
+				((JMenuItem) child).addActionListener(al);
 			}
 		}
 	}
