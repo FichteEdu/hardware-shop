@@ -36,19 +36,34 @@ public class ControllerShop implements ActionListener {
 					System.out.println("Unknown Action for button: " + btn.getText());
 			}
 		} else if (e.getSource() instanceof JMenuItem) {
-			switch (((JMenuItem) e.getSource()).getText()) {
+			JMenuItem itm = (JMenuItem) e.getSource();
+			switch (itm.getText()) {
 				case "Bin": model.setStrat((byte) 0);
 					break;
 				case "beans": model.setStrat((byte) 1);
 					break;
 				case "xstream": model.setStrat((byte) 2);
 					break;
+				case "save": save();
+					break;
+				case "load": load();
+					break;
 				default: //Comming
-					break;				
+					System.out.println("Unknown Action for button: " + itm.getText());				
 			}
 		} else {
 			System.out.println("Error: Input of unknown source.");
 		}
+		
+	}
+
+	private void load() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void save() {
+		// TODO Auto-generated method stub
 		
 	}
 
