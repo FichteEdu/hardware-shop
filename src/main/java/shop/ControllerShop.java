@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import model.serialization.BinaryStrategy;
 import model.serialization.XMLStrategy;
+import model.serialization.XStreamStrategy;
 import fpt.com.Product;
 import fpt.com.SerializableStrategy;
 
@@ -80,7 +81,7 @@ public class ControllerShop implements ActionListener {
 				binaryStrat = new XMLStrategy();
 				break;
 			default:
-				binaryStrat = null; // TODO: XSteamStrategy();
+				binaryStrat = new XStreamStrategy();
 				break;
 		}
 
