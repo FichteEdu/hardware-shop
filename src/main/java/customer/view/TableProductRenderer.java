@@ -21,22 +21,24 @@ public class TableProductRenderer {
 		data = new Object[plist.size()][4];
 		int i = 0;
 		for (Product p : plist) {
-			setValueAt(p.getName(), p.getPrice(), p.getQuantity(), new Integer(0), i++);
+			setValueAt(p.getName(), p.getPrice(), p.getQuantity(), 0, i++);
 		}
-		i = 0;
+		
+		// Create table and set options
 		table = new JTable(data, title);
 		table.setRowSelectionAllowed(true);
 		table.setColumnSelectionAllowed(false);
 		table.setEditingColumn(3);
 		table.getTableHeader().setReorderingAllowed(false);
+		
 		return table;
 	}
 
 	public void setValueAt(Object name, Object price, Object maxCount, Object orderCount, int row) {
-		data[row][1] = name;
-		data[row][2] = price;
-		data[row][3] = maxCount;
-		data[row][4] = orderCount;
+		data[row][0] = name;
+		data[row][1] = price;
+		data[row][2] = maxCount;
+		data[row][3] = orderCount;
 		fireTableRowUpdate(row);
 	}
 
@@ -49,7 +51,7 @@ public class TableProductRenderer {
 	public void update(Observable o, Object arg) {
 		int i = 0;
 		for (Product p : plist) {
-			setValueAt(p.getName(), p.getPrice(), p.getQuantity(), new Integer(0), i++);
+			setValueAt(p.getName(), p.getPrice(), p.getQuantity(), 0, i++);
 		}
 		i = 0;
 	}
