@@ -40,6 +40,7 @@ public class ViewCustomer extends JFrame implements Observer {
 		setSize(700,500);
 		setResizable(false);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
+		setLocation(500, 0);
 		
 		plist = m.getProductList();
 		right = new JPanel();
