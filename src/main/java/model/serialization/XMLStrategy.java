@@ -9,49 +9,48 @@ import java.io.IOException;
 import fpt.com.Product;
 
 public class XMLStrategy implements fpt.com.SerializableStrategy {
+	private FileInputStream fi;
+	private FileOutputStream fo;
 	private XMLDecoder decoder;
 	private XMLEncoder encoder;
 
 	@Override
 	public Product readObject() throws IOException {
 		if (this.decoder == null) {
-			try (FileInputStream fi = new FileInputStream("products.xml"); XMLDecoder d = new XMLDecoder(fi)) {
-				this.decoder = d;
-				return (Product) decoder.readObject();
+			try {
+				fi = new FileInputStream("products.xml");
+				this.decoder = new XMLDecoder(fi);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} else {
-			try {
-				return (Product) decoder.readObject();
-			} catch (ArrayIndexOutOfBoundsException e) {
-				return null;
-			}
 		}
-		return null;
+		try {
+			return (Product) decoder.readObject();
+		} catch (ArrayIndexOutOfBoundsException e) {
+			return null;
+		}
 	}
 
 	@Override
 	public void writeObject(Product obj) throws IOException {
 		if (this.encoder == null) {
-			try (FileOutputStream fo = new FileOutputStream("products.xml"); XMLEncoder e = new XMLEncoder(fo)) {
-				this.encoder = e;
-				encoder.writeObject(obj);
-				encoder.flush();
+			try {
+				fo = new FileOutputStream("products.xml");
+				encoder = new XMLEncoder(fo);
 			} catch ( IOException e) {
 				e.printStackTrace() ;
 			}
-		} else {
-			this.encoder.writeObject(obj);
-			this.encoder.flush();
 		}
+		this.encoder.writeObject(obj);
+		this.encoder.flush();
 	}
 
 	@Override
 	public void close() throws IOException {
-		// TODO Auto-generated method stub
-		this.decoder.close();
-		this.encoder.close();
+		if (this.decoder != null)
+			this.decoder.close();
+		if (this.encoder != null)
+			this.encoder.close();
 	}
 
 }
