@@ -18,17 +18,13 @@ public class BinaryStrategy implements fpt.com.SerializableStrategy {
 	@Override
 	public Product readObject() throws IOException {
 		if (ois == null) {
-			try {
-				fis = new FileInputStream("products.ser");
-				ois = new ObjectInputStream(fis);
-			} catch (IOException e) {
-					e.printStackTrace();
-			}
+			fis = new FileInputStream("products.ser");
+			ois = new ObjectInputStream(fis);
 		}
 		try {
 			return (Product) ois.readObject();
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Datei enthält keine Objekte der gesuchten Klasse.");
 		}
 		return null;
 	}
@@ -36,19 +32,11 @@ public class BinaryStrategy implements fpt.com.SerializableStrategy {
 	@Override
 	public void writeObject(Product obj) throws IOException {
 		if (fis == null) {
-			try {
-				fos = new FileOutputStream("products.ser");
-				oos = new ObjectOutputStream(fos);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			fos = new FileOutputStream("products.ser");
+			oos = new ObjectOutputStream(fos);
 		}
-		try {
-			oos.writeObject(obj); // write Object
-			oos.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
+		oos.writeObject(obj); // write Object
+		oos.flush();
 	}
 
 	@Override
