@@ -1,0 +1,31 @@
+<model.Product>
+  <id>0</id>
+  <name>asdfasd</name>
+  <price>123.0</price>
+  <quantity>12</quantity>
+</model.Product><model.Product>
+  <id>1</id>
+  <name>asdfasd</name>
+  <price>123.0</price>
+  <quantity>12</quantity>
+</model.Product><model.Product>
+  <id>2</id>
+  <name>asdfasd</name>
+  <price>123.0</price>
+  <quantity>12</quantity>
+</model.Product><model.Product>
+  <id>3</id>
+  <name>asdfasd</name>
+  <price>123.0</price>
+  <quantity>12</quantity>
+</model.Product><model.Product>
+  <id>4</id>
+  <name>asdfasd</name>
+  <price>123.0</price>
+  <quantity>12</quantity>
+</model.Product><model.Product>
+  <id>5</id>
+  <name>asdfasd</name>
+  <price>123.0</price>
+  <quantity>12</quantity>
+</model.Product>

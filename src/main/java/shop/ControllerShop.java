@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
+import model.ProductList;
 import model.serialization.BinaryStrategy;
 import model.serialization.XMLStrategy;
 import model.serialization.XStreamStrategy;
@@ -90,6 +91,8 @@ public class ControllerShop implements ActionListener {
 	}
 
 	private void load() {
+		model.setProductList(new ProductList());
+		
 		SerializableStrategy binaryStrat = getStrat();
 
 		try {
