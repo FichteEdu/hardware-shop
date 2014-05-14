@@ -185,7 +185,7 @@ public class ViewShop extends JFrame implements Observer {
 	private Product getProduct(int i) {
 		Iterator<Product> it = plist.iterator();
 
-		// Get the product at position X
+		// Get the product at position i
 		for (int j = 0; it.hasNext(); it.next(), j++)
 			if (j == i)
 				return it.next();
@@ -221,7 +221,6 @@ public class ViewShop extends JFrame implements Observer {
 		
 		double price = ((Number) ftfPrice.getValue()).doubleValue();
 		int quantity = ((Number) ftfQuantity.getValue()).intValue();
-		// TODO Auto-generated method stub
 		return new model.Product(name, price, quantity);
 	}
 }
