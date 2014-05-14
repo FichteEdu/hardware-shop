@@ -1,63 +1,47 @@
 package customer.view;
 
-import java.util.Observable;
-
 import javax.swing.JTable;
 
+import fpt.com.ProductList;
 import fpt.com.Product;
-import model.ProductList;
 
 
+// TODO make this into a TableModel (because currently it doesn't work!)
 public class TableProductRenderer {
 
-	private Object[][]		data;
+	private Object[][]		data	= { {"", "" ,"" ,""} };
 	private static String[]	title	= { "Name", "Price", "MaxCount", "OrderCount" };
 	private JTable			table;
 	private ProductList		plist;
 
-	public JTable ProductTable(ProductList plist) {
-
+	public JTable createProductTable(ProductList plist) {
 		this.plist = plist;
-		data = new Object[plist.size()][4];
-		
-		// Create table
+
+		// Create (initially empty) table and set options
 		table = new JTable(data, title);
-		int i = 0;
-		
-		// Fill ARRAY data[][]
-		for (Product p : plist) {
-			setValueAt(p.getName(), p.getPrice(), p.getQuantity(), 0, i++);
-		}
-		
-		// and set options
 		table.setRowSelectionAllowed(true);
 		table.setColumnSelectionAllowed(false);
 		table.setEditingColumn(3);
 		table.getTableHeader().setReorderingAllowed(false);
-		
+
+		// Fill the table
+		refill();
+
 		return table;
 	}
 
-	public void setValueAt(Object name, Object price, Object maxCount, Object orderCount, int row) {
-		data[row][0] = name;
-		data[row][1] = price;
-		data[row][2] = maxCount;
-		data[row][3] = orderCount;
-		fireTableRowUpdate(row);
-	}
+	public void refill() {
+		int row = 0;
+		Object[] data = new Object[4];
 
-	public void fireTableRowUpdate(int row) {
-		for (int i = 0; i < 4; ++i) {
-			table.setValueAt(data[row][1], row, i);
-		}
-	}
-
-	public void update(Observable o, Object arg) {
-		int i = 0;
 		for (Product p : plist) {
-			setValueAt(p.getName(), p.getPrice(), p.getQuantity(), 0, i++);
+			data[0] = p.getName();
+			data[1] = p.getPrice();
+			data[2] = p.getQuantity();
+			data[3] = 0;
+			for (int i = 0; i < 4; ++i)
+				table.setValueAt(data, row, i);
 		}
-		i = 0;
 	}
 
 }

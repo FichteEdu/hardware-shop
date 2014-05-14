@@ -3,14 +3,14 @@ package customer;
 import java.util.Iterator;
 import java.util.Observable;
 
-import model.ProductList;
 import fpt.com.Product;
 
 
+// TODO this will have to be changed
 public class ModelCustomer extends Observable implements fpt.com.ProductList {
 
-	private static final long	serialVersionUID	= 4001L;
-	private ProductList			cartlist			= new ProductList();
+	private static final long	serialVersionUID	= 6001L;
+	private fpt.com.ProductList	cartlist			= new model.ProductList();
 
 	@Override
 	public Iterator<Product> iterator() {
