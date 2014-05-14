@@ -19,7 +19,7 @@ public class XMLStrategy implements fpt.com.SerializableStrategy {
 		if (this.decoder == null) {
 			try {
 				fi = new FileInputStream("products.xml");
-				this.decoder = new XMLDecoder(fi);
+				decoder = new XMLDecoder(fi);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -41,16 +41,20 @@ public class XMLStrategy implements fpt.com.SerializableStrategy {
 				e.printStackTrace() ;
 			}
 		}
-		this.encoder.writeObject(obj);
-		this.encoder.flush();
+		encoder.writeObject(obj);
+		encoder.flush();
 	}
 
 	@Override
 	public void close() throws IOException {
-		if (this.decoder != null)
-			this.decoder.close();
-		if (this.encoder != null)
-			this.encoder.close();
+		if (fi != null)
+			fi.close();
+		if (fo != null)
+			fo.close();
+		if (decoder != null)
+			decoder.close();
+		if (encoder != null)
+			encoder.close();
 	}
 
 }
