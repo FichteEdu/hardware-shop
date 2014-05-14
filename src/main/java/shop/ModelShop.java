@@ -11,7 +11,6 @@ public class ModelShop extends Observable implements fpt.com.ProductList {
 
 	private static final long	serialVersionUID	= 4001L;
 	private ProductList			plist				= new ProductList();
-	private byte				strat;										//0=bin, 1=beans, 2=xstream
 
 	@Override
 	public Iterator<Product> iterator() {
@@ -45,14 +44,6 @@ public class ModelShop extends Observable implements fpt.com.ProductList {
 	@Override
 	public Product findProductByName(String name) {
 		return plist.findProductByName(name);
-	}
-	
-	public byte getStrat() {
-		return this.strat;
-	}
-	
-	public void setStrat(byte strat) {
-		this.strat = strat;
 	}
 
 	/**

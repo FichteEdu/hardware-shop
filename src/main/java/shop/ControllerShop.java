@@ -11,6 +11,7 @@ public class ControllerShop implements ActionListener {
 
 	private ModelShop	model;
 	private ViewShop	view;
+	private byte		strat;		//0=bin, 1=beans, 2=xstream
 
 	public ControllerShop() {
 	}
@@ -38,11 +39,11 @@ public class ControllerShop implements ActionListener {
 		} else if (e.getSource() instanceof JMenuItem) {
 			JMenuItem itm = (JMenuItem) e.getSource();
 			switch (itm.getText()) {
-				case "Bin": model.setStrat((byte) 0);
+				case "Bin": setStrat((byte) 0);
 					break;
-				case "beans": model.setStrat((byte) 1);
+				case "beans": setStrat((byte) 1);
 					break;
-				case "xstream": model.setStrat((byte) 2);
+				case "xstream": setStrat((byte) 2);
 					break;
 				case "save": save();
 					break;
@@ -55,6 +56,14 @@ public class ControllerShop implements ActionListener {
 			System.out.println("Error: Input of unknown source.");
 		}
 		
+	}
+	
+	public byte getStrat() {
+		return this.strat;
+	}
+	
+	public void setStrat(byte strat) {
+		this.strat = strat;
 	}
 
 	private void load() {
