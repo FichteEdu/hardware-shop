@@ -19,13 +19,13 @@ public class TableProductRenderer {
 
 		this.plist = plist;
 		data = new Object[plist.size()][4];
+		table = new JTable(data, title);
 		int i = 0;
 		for (Product p : plist) {
 			setValueAt(p.getName(), p.getPrice(), p.getQuantity(), 0, i++);
 		}
 		
 		// Create table and set options
-		table = new JTable(data, title);
 		table.setRowSelectionAllowed(true);
 		table.setColumnSelectionAllowed(false);
 		table.setEditingColumn(3);
