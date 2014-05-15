@@ -97,7 +97,7 @@ public class ControllerShop implements ActionListener {
 		m.setProductList(new ProductList());
 
 		SerializableStrategy binaryStrat = getStrat();
-		long maxID = 0;
+		long maxID = model.Product.getIdgen().getNextID() - 1;
 
 		try {
 			Product p;
@@ -106,7 +106,8 @@ public class ControllerShop implements ActionListener {
 				if (p == null)
 					break;
 				m.add(p);
-				// Get the highest ID used in the entire list
+				// Get the highest ID used in the entire list, but only if it's
+				// higher than the current next ID
 				maxID = Math.max(maxID, p.getId());
 			}
 		} catch (IOException e) {
