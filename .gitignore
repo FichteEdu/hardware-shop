@@ -1,1 +1,4 @@
 *.class
+products.ser
+products.xml
+productsx.xml
