@@ -70,24 +70,21 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy {
 
 }
 
-class IDConverter implements Converter {
+class IDConverter implements SingleValueConverter {
 
 	@Override
-	public boolean canConvert(Class arg0) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean canConvert(Class type) {
+		return type.equals(String.class);
 	}
 
 	@Override
-	public void marshal(Object arg0, HierarchicalStreamWriter arg1, MarshallingContext arg2) {
-		// TODO Auto-generated method stub
-		
+	public Object fromString(String arg0) {
+		return Long.parseLong(arg0);
 	}
 
 	@Override
-	public Object unmarshal(HierarchicalStreamReader arg0, UnmarshallingContext arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public String toString(Object arg0) {
+		return String.format("%06d", arg0);
 	}
 	
 }
@@ -96,7 +93,6 @@ class PriceConverter implements SingleValueConverter {
 
 	@Override
 	public boolean canConvert(Class type) {
-		// TODO Auto-generated method stub
 		return type.equals(double.class) || type.equals(Double.class);
 	}
 
@@ -107,8 +103,7 @@ class PriceConverter implements SingleValueConverter {
 
 	@Override
 	public String toString(Object arg0) {
-		// TODO Auto-generated method stub
-		return String.valueOf(arg0);
+		return String.format("%.2f", arg0).replace(",", ".");
 	}
 	
 }
