@@ -55,7 +55,7 @@ public class Product implements fpt.com.Product {
 
 	@Override
 	public void setQuantity(int quantity) {
-		this.quantity = quantity;
+		this.quantity = Math.abs(quantity);
 	}
 
 	@Override
