@@ -14,12 +14,15 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import fpt.com.Product;
 
+
 public class XStreamStrategy implements fpt.com.SerializableStrategy {
-	
-	static final XStream xstream = new XStream(new DomDriver());
-	private ObjectOutputStream oos;
-	private ObjectInputStream ois;
-	
+
+	private static final XStream	xstream	= new XStream(new DomDriver());
+	private FileReader				fr;
+	private ObjectInputStream		ois;
+	private ObjectOutputStream		oos;
+	private FileWriter				fw;
+
 	// Set defaults for xstream
 	static {
 		xstream.useAttributeFor(model.Product.class, "id");
@@ -33,11 +36,8 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy {
 	@Override
 	public Product readObject() throws IOException {
 		if (ois == null) {
-			try {
-				ois = xstream.createObjectInputStream(new FileReader("productsx.xml"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			fr = new FileReader("productsx.xml");
+			ois = xstream.createObjectInputStream(fr);
 		}
 		try {
 			return (Product) ois.readObject();
@@ -51,11 +51,8 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy {
 	@Override
 	public void writeObject(Product obj) throws IOException {
 		if (oos == null) {
-			try {
-				oos = xstream.createObjectOutputStream(new FileWriter("productsx.xml"), "waren");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			fw = new FileWriter("productsx.xml");
+			oos = xstream.createObjectOutputStream(fw, "waren");
 		}
 		oos.writeObject(obj);
 	}
@@ -66,9 +63,14 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy {
 			ois.close();
 		if (oos != null)
 			oos.close();
+		if (fr != null)
+			fr.close();
+		if (fw != null)
+			fw.close();
 	}
 
 }
+
 
 class IDConverter implements SingleValueConverter {
 
@@ -87,8 +89,9 @@ class IDConverter implements SingleValueConverter {
 	public String toString(Object arg0) {
 		return String.format("%06d", arg0);
 	}
-	
+
 }
+
 
 class PriceConverter implements SingleValueConverter {
 
@@ -107,5 +110,5 @@ class PriceConverter implements SingleValueConverter {
 	public String toString(Object arg0) {
 		return String.format(Locale.ENGLISH, "%.2f", arg0);
 	}
-	
+
 }
