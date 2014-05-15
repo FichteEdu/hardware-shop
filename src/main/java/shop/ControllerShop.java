@@ -42,7 +42,8 @@ public class ControllerShop implements ActionListener {
 						m.add(p);
 					break;
 				case "Delete (selected)":
-					m.delete(v.getSelected());
+					for (Product pr : v.getSelected())
+						m.delete(pr);
 					break;
 				default:
 					System.out.println("Unknown Action for button: " + btn.getText());
