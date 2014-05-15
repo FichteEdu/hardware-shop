@@ -165,12 +165,18 @@ public class ViewShop extends JFrame implements Observer {
 	}
 
 	/**
-	 * Return the currently selected product in the table.
+	 * Return the currently selected products in the table.
 	 * 
 	 * @return ^
 	 */
-	public Product getSelected() {
-		return getProduct(productJList.getSelectedIndex());
+	public Product[] getSelected() {
+		int[] sel = productJList.getSelectedIndices();
+		Product[] ret = new Product[sel.length];
+
+		for (int i = 0; i < sel.length; i++) {
+			ret[i] = getProduct(sel[i]);
+		}
+		return ret;
 	}
 
 	@Override
