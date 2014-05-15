@@ -117,7 +117,8 @@ public class ControllerShop implements ActionListener {
 			} catch (IOException e) {
 			}
 		}
-		
+
+		// And use it to tell the generator which ID to generate next
 		model.Product.getIdgen().setNextID(maxID + 1);
 	}
 
@@ -136,6 +137,7 @@ public class ControllerShop implements ActionListener {
 			} catch (IOException e) {
 			}
 		}
+
 	}
 
 	/**
