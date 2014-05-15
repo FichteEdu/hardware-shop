@@ -8,21 +8,19 @@ import java.io.IOException;
 
 import fpt.com.Product;
 
+
 public class XMLStrategy implements fpt.com.SerializableStrategy {
-	private FileInputStream fi;
-	private FileOutputStream fo;
-	private XMLDecoder decoder;
-	private XMLEncoder encoder;
+
+	private FileInputStream		fi;
+	private FileOutputStream	fo;
+	private XMLDecoder			decoder;
+	private XMLEncoder			encoder;
 
 	@Override
 	public Product readObject() throws IOException {
 		if (this.decoder == null) {
-			try {
-				fi = new FileInputStream("products.xml");
-				decoder = new XMLDecoder(fi);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			fi = new FileInputStream("products.xml");
+			decoder = new XMLDecoder(fi);
 		}
 		try {
 			return (Product) decoder.readObject();
@@ -34,12 +32,8 @@ public class XMLStrategy implements fpt.com.SerializableStrategy {
 	@Override
 	public void writeObject(Product obj) throws IOException {
 		if (this.encoder == null) {
-			try {
-				fo = new FileOutputStream("products.xml");
-				encoder = new XMLEncoder(fo);
-			} catch ( IOException e) {
-				e.printStackTrace() ;
-			}
+			fo = new FileOutputStream("products.xml");
+			encoder = new XMLEncoder(fo);
 		}
 		encoder.writeObject(obj);
 		encoder.flush();
