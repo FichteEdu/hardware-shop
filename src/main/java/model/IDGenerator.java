@@ -18,13 +18,5 @@ public class IDGenerator {
 	public void setNextID(long id) {
 		nextID = id;
 	}
-	/*TOCHECK sinnvoll?
-	public void resetID(){
-		this.lastID = 0;
-	}*/
-	
-	public void setID(long lastID){
-		this.lastID = lastID;
-	}
 
 }
