@@ -41,14 +41,14 @@ public class XMLStrategy implements fpt.com.SerializableStrategy {
 
 	@Override
 	public void close() throws IOException {
-		if (fi != null)
-			fi.close();
-		if (fo != null)
-			fo.close();
 		if (decoder != null)
 			decoder.close();
 		if (encoder != null)
 			encoder.close();
+		if (fi != null)
+			fi.close();
+		if (fo != null)
+			fo.close();
 	}
 
 }
