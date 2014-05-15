@@ -61,16 +61,18 @@ public class ViewShop extends JFrame implements Observer {
 		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
 
 		// Create text fields and formatters
-		tfName = new TextField();
+		tfName = new TextField("");
 
 		NumberFormat fmt = NumberFormat.getNumberInstance();
 		fmt.setMinimumFractionDigits(2);
 		fmt.setMaximumFractionDigits(2);
 		ftfPrice = new JFormattedTextField(fmt);
+		ftfPrice.setValue(0);
 
 		fmt = NumberFormat.getNumberInstance();
 		fmt.setMaximumFractionDigits(0);
 		ftfQuantity = new JFormattedTextField(fmt);
+		ftfQuantity.setValue(0);
 
 		// Create input boxes
 		sidePanel.add(wrapTextField(tfName, "Name"));

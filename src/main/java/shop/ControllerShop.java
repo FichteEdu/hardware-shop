@@ -37,7 +37,9 @@ public class ControllerShop implements ActionListener {
 
 			switch (btn.getText()) {
 				case "Add":
-					model.add(view.getNewProduct());
+					Product p = view.getNewProduct();
+					if (p != null)
+						model.add(p);
 					break;
 				case "Delete (selected)":
 					model.delete(view.getSelected());
@@ -63,7 +65,7 @@ public class ControllerShop implements ActionListener {
 				case "load":
 					load();
 					break;
-				default: 
+				default:
 					System.out.println("Unknown Action for button: " + itm.getText());
 					break;
 			}
@@ -92,7 +94,7 @@ public class ControllerShop implements ActionListener {
 
 	private void load() {
 		model.setProductList(new ProductList());
-		
+
 		SerializableStrategy binaryStrat = getStrat();
 
 		try {
