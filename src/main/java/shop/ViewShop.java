@@ -15,15 +15,17 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
-import javax.swing.JMenuBar;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
+import javax.swing.border.EmptyBorder;
 
 import model.serialization.BinaryStrategy;
 import model.serialization.XMLStrategy;
@@ -54,14 +56,18 @@ public class ViewShop extends JFrame implements Observer {
 		setTitle("ViewShop");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(450, 300);
+		
+		JComponent content = (JComponent) getContentPane();
+		content.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		productJList = new JList<Product>();
 		productJList.setCellRenderer(new ListProductRenderer());
-		getContentPane().add(new JScrollPane(productJList), BorderLayout.CENTER);
+		content.add(new JScrollPane(productJList), BorderLayout.CENTER);
 
 		JPanel sidePanel = new JPanel();
-		getContentPane().add(sidePanel, BorderLayout.EAST);
+		content.add(sidePanel, BorderLayout.EAST);
 		sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+		sidePanel.setBorder(new EmptyBorder(0, 5, 0, 0));
 
 		// Create text fields and formatters
 		tfName = new TextField("");
