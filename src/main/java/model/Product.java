@@ -11,21 +11,30 @@ public class Product implements fpt.com.Product {
 	private double						price;
 	private int							quantity;
 
-	// TOCHECK useful?
+	// We need this for Beans serialization
 	public Product() {
-		this("", 0, 0);
+		this(0, "", 0, 0);
 	}
 
+	// Generate the id only for this type of constructor
 	public Product(	String name, double price, int quantity) {
+		this(0, name, price, quantity);
 		try {
 			setId(idgen.generate());
 		} catch (Exception e) {
 			e.printStackTrace();
-			setId(0);
 		}
+	}
+
+	public Product(	long id, String name, double price, int quantity) {
+		setId(id);
 		setName(name);
 		setPrice(price);
 		setQuantity(quantity);
+	}
+
+	public static IDGenerator getIdgen() {
+		return idgen;
 	}
 
 	@Override

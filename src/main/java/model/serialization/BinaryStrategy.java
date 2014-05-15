@@ -1,5 +1,6 @@
 package model.serialization;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -8,12 +9,13 @@ import java.io.ObjectOutputStream;
 
 import fpt.com.Product;
 
+
 public class BinaryStrategy implements fpt.com.SerializableStrategy {
-	
-	private FileInputStream fis;
-	private FileOutputStream fos;
-	private ObjectInputStream ois;
-	private ObjectOutputStream oos;
+
+	private FileInputStream		fis;
+	private FileOutputStream	fos;
+	private ObjectInputStream	ois;
+	private ObjectOutputStream	oos;
 
 	@Override
 	public Product readObject() throws IOException {
@@ -25,7 +27,10 @@ public class BinaryStrategy implements fpt.com.SerializableStrategy {
 			return (Product) ois.readObject();
 		} catch (ClassNotFoundException e) {
 			System.out.println("Datei enthält keine Objekte der gesuchten Klasse.");
+		} catch (EOFException e) {
+			// We reached the end so just return null
 		}
+
 		return null;
 	}
 
