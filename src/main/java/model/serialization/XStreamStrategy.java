@@ -1,5 +1,6 @@
 package model.serialization;
 
+import java.io.EOFException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,6 +30,8 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy {
 		try {
 			return (Product) ois.readObject();
 		} catch (ClassNotFoundException e) {
+			return null;
+		} catch (EOFException e) {
 			return null;
 		}
 	}
