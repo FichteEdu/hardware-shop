@@ -6,14 +6,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Locale;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.SingleValueConverter;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import fpt.com.Product;
@@ -23,6 +19,16 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy {
 	static final XStream xstream = new XStream(new DomDriver());
 	private ObjectOutputStream oos;
 	private ObjectInputStream ois;
+	
+	// Set defaults for xstream
+	static {
+		xstream.useAttributeFor(model.Product.class, "id");
+		xstream.aliasField("preis", model.Product.class, "price");
+		xstream.aliasField("anzahl", model.Product.class, "quantity");
+		xstream.registerLocalConverter(model.Product.class, "id", new IDConverter());
+		xstream.registerLocalConverter(model.Product.class, "price", new PriceConverter());
+		xstream.alias("ware", model.Product.class);
+	}
 
 	@Override
 	public Product readObject() throws IOException {
@@ -45,12 +51,6 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy {
 	@Override
 	public void writeObject(Product obj) throws IOException {
 		if (oos == null) {
-			xstream.useAttributeFor(model.Product.class, "id");
-			xstream.aliasField("preis", model.Product.class, "price");
-			xstream.aliasField("anzahl", model.Product.class, "quantity");
-			xstream.registerLocalConverter(model.Product.class, "id", new IDConverter());
-			xstream.registerLocalConverter(model.Product.class, "price", new PriceConverter());
-			xstream.alias("ware", model.Product.class);
 			try {
 				oos = xstream.createObjectOutputStream(new FileWriter("productsx.xml"), "waren");
 			} catch (IOException e) {
@@ -72,6 +72,7 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy {
 
 class IDConverter implements SingleValueConverter {
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean canConvert(Class type) {
 		return type.equals(String.class);
@@ -91,6 +92,7 @@ class IDConverter implements SingleValueConverter {
 
 class PriceConverter implements SingleValueConverter {
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean canConvert(Class type) {
 		return type.equals(double.class) || type.equals(Double.class);
@@ -103,7 +105,7 @@ class PriceConverter implements SingleValueConverter {
 
 	@Override
 	public String toString(Object arg0) {
-		return String.format("%.2f", arg0).replace(",", ".");
+		return String.format(Locale.ENGLISH, "%.2f", arg0);
 	}
 	
 }
