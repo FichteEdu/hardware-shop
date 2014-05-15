@@ -2,13 +2,21 @@ package model;
 
 public class IDGenerator {
 
-	private long				lastID	= 0;
+	private long				nextID	= 0;
 	private static final long	MAX_ID	= 999999;
 
 	public long generate() throws Exception {
-		if (lastID == MAX_ID)
+		if (nextID == MAX_ID)
 			throw new Exception("Reached maximum ID, no further generations possible.");
-		return lastID++;
+		return nextID++;
+	}
+
+	public void resetID() {
+		this.nextID = 0;
+	}
+
+	public void setNextID(long id) {
+		nextID = id;
 	}
 	/*TOCHECK sinnvoll?
 	public void resetID(){

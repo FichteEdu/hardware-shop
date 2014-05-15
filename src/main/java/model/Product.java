@@ -4,10 +4,6 @@ public class Product implements fpt.com.Product {
 
 	private static final long			serialVersionUID	= 1001L;
 
-	// This ID generator will not save states between restarts of the program
-	// and its state is not loaded if you load a stored productlist.
-	// There are ways to circumvent this, but the exercises didn't say anything
-	// about it, so we're taking it easy.
 	private static final IDGenerator	idgen				= new IDGenerator();
 
 	private long						id;
@@ -30,6 +26,10 @@ public class Product implements fpt.com.Product {
 		setName(name);
 		setPrice(price);
 		setQuantity(quantity);
+	}
+
+	public static IDGenerator getIdgen() {
+		return idgen;
 	}
 
 	@Override

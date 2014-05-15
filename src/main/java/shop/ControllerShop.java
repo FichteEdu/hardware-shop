@@ -18,8 +18,8 @@ import fpt.com.SerializableStrategy;
 
 public class ControllerShop implements ActionListener {
 
-	private ModelShop	model;
-	private ViewShop	view;
+	private ModelShop	m;
+	private ViewShop	v;
 	private byte		strat;	// 0=bin, 1=beans, 2=xstream
 
 	public ControllerShop() {
@@ -37,12 +37,12 @@ public class ControllerShop implements ActionListener {
 
 			switch (btn.getText()) {
 				case "Add":
-					Product p = view.getNewProduct();
+					Product p = v.getNewProduct();
 					if (p != null)
-						model.add(p);
+						m.add(p);
 					break;
 				case "Delete (selected)":
-					model.delete(view.getSelected());
+					m.delete(v.getSelected());
 					break;
 				default:
 					System.out.println("Unknown Action for button: " + btn.getText());
@@ -93,9 +93,10 @@ public class ControllerShop implements ActionListener {
 	}
 
 	private void load() {
-		model.setProductList(new ProductList());
+		m.setProductList(new ProductList());
 
 		SerializableStrategy binaryStrat = getStrat();
+		long maxID = 0;
 
 		try {
 			Product p;
@@ -103,8 +104,9 @@ public class ControllerShop implements ActionListener {
 				p = binaryStrat.readObject();
 				if (p == null)
 					break;
-				else
-					model.add(p);
+				m.add(p);
+				// Get the highest ID used in the entire list
+				maxID = Math.max(maxID, p.getId());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -115,13 +117,15 @@ public class ControllerShop implements ActionListener {
 			} catch (IOException e) {
 			}
 		}
+		
+		model.Product.getIdgen().setNextID(maxID + 1);
 	}
 
 	private void save() {
 		SerializableStrategy binaryStrat = getStrat();
 
 		try {
-			for (Product p : model)
+			for (Product p : m)
 				binaryStrat.writeObject(p);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -141,12 +145,12 @@ public class ControllerShop implements ActionListener {
 	 * @param v
 	 */
 	public void link(ModelShop m, ViewShop v) {
-		model = m;
-		view = v;
+		this.m = m;
+		this.v = v;
 
-		model.addObserver(v);
-		view.setModel(m);
-		view.addActionListener(this);
+		m.addObserver(v);
+		v.setModel(m);
+		v.addActionListener(this);
 	}
 
 }
