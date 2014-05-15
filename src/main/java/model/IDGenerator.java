@@ -10,5 +10,13 @@ public class IDGenerator {
 			throw new Exception("Reached maximum ID, no further generations possible.");
 		return lastID++;
 	}
+	/*TOCHECK sinnvoll?
+	public void resetID(){
+		this.lastID = 0;
+	}*/
+	
+	public void setID(long lastID){
+		this.lastID = lastID;
+	}
 
 }
