@@ -13,7 +13,8 @@ import javax.swing.JTable;
 
 import model.Order;
 import customer.view.OrderRenderer;
-import customer.view.TableProductRenderer;
+import customer.view.ProductListTableModel;
+import fpt.com.ProductList;
 
 
 public class ViewCustomer extends JFrame implements Observer {
@@ -22,32 +23,42 @@ public class ViewCustomer extends JFrame implements Observer {
 
 	private JList<Order>			cartJList;
 
-	private TableProductRenderer	tr					= new TableProductRenderer();
+	private ProductListTableModel	tableModel;
+	private JTable					table;
 
-	public ViewCustomer(fpt.com.ProductList m) {
+	public ViewCustomer() {
 		setTitle("ViewCustomer");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(700, 500);
-		setResizable(false);
 		setLayout(new BoxLayout(getContentPane(), BoxLayout.X_AXIS));
 		setLocation(500, 0);
 
 		JPanel right = new JPanel();
-		new BoxLayout(right, BoxLayout.Y_AXIS);
+		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
 
 		cartJList = new JList<Order>();
 		cartJList.setCellRenderer(new OrderRenderer());
 		add(new JScrollPane(cartJList));
 
-		JTable productTable = tr.createProductTable(m);
-		right.add(new JScrollPane(productTable));
+		// Create table and set options
+		table = new JTable();
+		table.setRowSelectionAllowed(true);
+		table.setColumnSelectionAllowed(false);
+		// table.getTableHeader().setReorderingAllowed(false);
+		tableModel = new ProductListTableModel();
+		table.setModel(tableModel);
+		right.add(new JScrollPane(table));
 		right.add(new JButton("Buy"));
 		add(right);
 	}
 
+	public void setModel(ProductList m) {
+		tableModel.setPlist(m);
+	}
+
 	@Override
 	public void update(Observable o, Object arg) {
-		tr.refill();
+		tableModel.fireTableDataChanged();
 	}
 
 }
