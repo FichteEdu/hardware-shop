@@ -1,5 +1,6 @@
 package customer;
 
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -14,6 +15,7 @@ import javax.swing.JTable;
 import model.Order;
 import customer.view.OrderRenderer;
 import customer.view.ProductListTableModel;
+import fpt.com.Product;
 import fpt.com.ProductList;
 
 
@@ -21,7 +23,8 @@ public class ViewCustomer extends JFrame implements Observer {
 
 	private static final long		serialVersionUID	= 8575042175879061593L;
 
-	private JList<Order>			cartJList;
+	private JList<Order>			orderJList;
+	private OrderRenderer			orderRenderer;
 
 	private ProductListTableModel	tableModel;
 	private JTable					table;
@@ -36,9 +39,10 @@ public class ViewCustomer extends JFrame implements Observer {
 		JPanel right = new JPanel();
 		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
 
-		cartJList = new JList<Order>();
-		cartJList.setCellRenderer(new OrderRenderer());
-		add(new JScrollPane(cartJList));
+		orderJList = new JList<Order>();
+		orderRenderer = new OrderRenderer();
+		orderJList.setCellRenderer(orderRenderer);
+		add(new JScrollPane(orderJList));
 
 		// Create table and set options
 		table = new JTable();
@@ -50,6 +54,14 @@ public class ViewCustomer extends JFrame implements Observer {
 		right.add(new JScrollPane(table));
 		right.add(new JButton("Buy"));
 		add(right);
+		
+		// set test data for jlist
+
+		Order order = new model.Order();
+		order.add(new model.Product("test", 2.2, 12));
+		order.add(new model.Product("test2", 12.2, 12));
+		Order[] array = { order };
+		orderJList.setListData(array);
 	}
 
 	public void setModel(ProductList m) {
@@ -60,5 +72,6 @@ public class ViewCustomer extends JFrame implements Observer {
 	public void update(Observable o, Object arg) {
 		tableModel.fireTableDataChanged();
 	}
+
 
 }

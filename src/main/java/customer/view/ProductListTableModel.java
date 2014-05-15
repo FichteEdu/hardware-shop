@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import javax.swing.table.AbstractTableModel;
 
+import fpt.com.Order;
 import fpt.com.Product;
 import fpt.com.ProductList;
 
@@ -12,6 +13,7 @@ import fpt.com.ProductList;
 public class ProductListTableModel extends AbstractTableModel {
 
 	private ProductList			plist;
+	private Order				order;
 
 	private static Object[][]	columns	= { { "Name", String.class }, { "Price", Double.class },
 			{ "Quantity", Integer.class }, { "OrderCount", Integer.class } };
@@ -19,8 +21,9 @@ public class ProductListTableModel extends AbstractTableModel {
 	public ProductListTableModel() {
 	}
 
-	public ProductListTableModel(	ProductList plist) {
-		this.plist = plist;
+	public ProductListTableModel(	Order order, ProductList plist) {
+		setOrder(order);
+		setPlist(plist);
 	}
 
 	/**
@@ -34,6 +37,19 @@ public class ProductListTableModel extends AbstractTableModel {
 
 	public ProductList getPlist() {
 		return plist;
+	}
+
+	/**
+	 * Set the table model's Order to fetch values from.
+	 * 
+	 * @param order
+	 */
+	public void setOrder(Order order) {
+		this.order = order;
+	}
+
+	public Order getOrder() {
+		return order;
 	}
 
 	@Override
@@ -66,9 +82,11 @@ public class ProductListTableModel extends AbstractTableModel {
 			case 1:
 				return p.getPrice();
 			case 2:
-				return p.getQuantity();
+				// Available products
+				Product pp = plist.findProductById(p.getId());
+				return pp.getQuantity();
 			case 3:
-				return 0;
+				return p.getQuantity();
 			default:
 				System.out.println("Invalid column number");
 		}
