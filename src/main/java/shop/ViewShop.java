@@ -13,39 +13,42 @@ import java.util.Observer;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import model.serialization.BinaryStrategy;
+import model.serialization.XMLStrategy;
+import model.serialization.XStreamStrategy;
 import shop.view.ListProductRenderer;
 import fpt.com.Product;
 import fpt.com.ProductList;
+import fpt.com.SerializableStrategy;
 
 
 @SuppressWarnings("serial")
 public class ViewShop extends JFrame implements Observer {
 
-	private JList<Product>		productJList;
-	private ProductList			plist;
+	private JList<Product>			productJList;
+	private ProductList				plist;
 
-	private TextField			tfName;
-	private JFormattedTextField	ftfPrice;
-	private JFormattedTextField	ftfQuantity;
-	
-	private JMenuBar			jMenuBar;
-	private JMenu				serStrat;
-	private JMenu				loadSaveStrat;
-	private JMenuItem			binarySer;
-	private JMenuItem			beansSer;
-	private JMenuItem			xstreamSer;
-	private JMenuItem			loadSer;
-	private JMenuItem			saveSer;
+	private TextField				tfName;
+	private JFormattedTextField		ftfPrice;
+	private JFormattedTextField		ftfQuantity;
+
+	private JRadioButtonMenuItem	binarySer;
+	private JRadioButtonMenuItem	beansSer;
+	private JRadioButtonMenuItem	xstreamSer;
+	private JMenuItem				loadSer;
+	private JMenuItem				saveSer;
 
 	public ViewShop() {
 		setTitle("ViewShop");
@@ -84,29 +87,35 @@ public class ViewShop extends JFrame implements Observer {
 		buttons.add(new JButton("Add"));
 		buttons.add(new JButton("Delete (selected)"));
 		sidePanel.add(buttons);
-		
+
 		// JMenuBar
-		jMenuBar = new JMenuBar();
-		serStrat = new JMenu("Serialization");
-		binarySer = new JMenuItem("Bin");
-		beansSer = new JMenuItem("beans");
-		xstreamSer = new JMenuItem("xstream");
-		
+		JMenuBar jMenuBar = new JMenuBar();
+		JMenu serStrat = new JMenu("Serialization");
+		binarySer = new JRadioButtonMenuItem("Bin", true);
+		beansSer = new JRadioButtonMenuItem("beans");
+		xstreamSer = new JRadioButtonMenuItem("xstream");
+
+		// Button group for serialization startegy
+		ButtonGroup serializeGroup = new ButtonGroup();
+		serializeGroup.add(beansSer);
+		serializeGroup.add(binarySer);
+		serializeGroup.add(xstreamSer);
+
 		serStrat.add(binarySer);
 		serStrat.add(beansSer);
 		serStrat.add(xstreamSer);
 		jMenuBar.add(serStrat);
-		
-		loadSaveStrat = new JMenu("Load/Save");
+
+		JMenu loadSaveStrat = new JMenu("Load/Save");
 		loadSer = new JMenuItem("load");
 		saveSer = new JMenuItem("save");
-		
+
 		loadSaveStrat.add(loadSer);
 		loadSaveStrat.add(saveSer);
-		
+
 		jMenuBar.add(loadSaveStrat);
 		setJMenuBar(jMenuBar);
-		
+
 	}
 
 	/**
@@ -133,11 +142,14 @@ public class ViewShop extends JFrame implements Observer {
 		for (Component child : c.getComponents()) {
 			if (child instanceof Container) {
 				addActionListener((Container) child, al);
-				if (child instanceof JMenu) { 				//JMenuItems scheinen beim Aufruf von getComponents auf JMenus 
-					JMenu toOpen = (JMenu) child;			//nicht gefunden zu werden, deswegen der Workaround
-					for (int i = 0; i < toOpen.getItemCount(); i++) {
-						toOpen.getItem(i).addActionListener(al);
-					}
+			}
+			// JMenu's popups are not included in getComponents, so we do this
+			// too.
+			// http://bugs.java.com/bugdatabase/view_bug.do;jsessionid=a629cf8a493f96b514e074842711?bug_id=4146596
+			if (child instanceof JMenu) {
+				JMenu menu = (JMenu) child;
+				for (int i = 0; i < menu.getItemCount(); i++) {
+					menu.getItem(i).addActionListener(al);
 				}
 			}
 			if (child instanceof JButton) {
@@ -165,7 +177,7 @@ public class ViewShop extends JFrame implements Observer {
 	}
 
 	/**
-	 * Return the currently selected products in the table.
+	 * Get the currently selected products in the table.
 	 * 
 	 * @return ^
 	 */
@@ -177,6 +189,35 @@ public class ViewShop extends JFrame implements Observer {
 			ret[i] = getProduct(sel[i]);
 		}
 		return ret;
+	}
+
+	/**
+	 * Get a newly created product constructed from values in the input
+	 * 
+	 * @return
+	 */
+	public Product getNewProduct() {
+		String name = tfName.getText();
+		if (name.isEmpty())
+			return null;
+
+		double price = ((Number) ftfPrice.getValue()).doubleValue();
+		int quantity = ((Number) ftfQuantity.getValue()).intValue();
+		return new model.Product(name, price, quantity);
+	}
+
+	/**
+	 * Get the selected serializable strategy (from menu radios)
+	 * 
+	 * @return ^
+	 */
+	public SerializableStrategy getSelectedStrat() {
+		if (binarySer.isSelected())
+			return new BinaryStrategy();
+		if (beansSer.isSelected())
+			return new XMLStrategy();
+		else
+			return new XStreamStrategy();
 	}
 
 	@Override
@@ -220,15 +261,5 @@ public class ViewShop extends JFrame implements Observer {
 		box.add(c);
 		box.setBorder(BorderFactory.createTitledBorder(title));
 		return box;
-	}
-
-	public Product getNewProduct() {
-		String name = tfName.getText();
-		if (name.isEmpty())
-			return null;
-		
-		double price = ((Number) ftfPrice.getValue()).doubleValue();
-		int quantity = ((Number) ftfQuantity.getValue()).intValue();
-		return new model.Product(name, price, quantity);
 	}
 }

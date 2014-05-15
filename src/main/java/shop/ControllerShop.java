@@ -9,9 +9,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 
 import model.ProductList;
-import model.serialization.BinaryStrategy;
-import model.serialization.XMLStrategy;
-import model.serialization.XStreamStrategy;
 import fpt.com.Product;
 import fpt.com.SerializableStrategy;
 
@@ -20,7 +17,6 @@ public class ControllerShop implements ActionListener {
 
 	private ModelShop	m;
 	private ViewShop	v;
-	private byte		strat;	// 0=bin, 1=beans, 2=xstream
 
 	public ControllerShop() {
 	}
@@ -52,13 +48,8 @@ public class ControllerShop implements ActionListener {
 			JMenuItem itm = (JMenuItem) e.getSource();
 			switch (itm.getText()) {
 				case "Bin":
-					strat = (byte) 0;
-					break;
 				case "beans":
-					strat = (byte) 1;
-					break;
 				case "xstream":
-					strat = (byte) 2;
 					break;
 				case "save":
 					save();
@@ -67,7 +58,7 @@ public class ControllerShop implements ActionListener {
 					load();
 					break;
 				default:
-					System.out.println("Unknown Action for button: " + itm.getText());
+					System.out.println("Unknown Action for menu item: " + itm.getText());
 					break;
 			}
 		} else {
@@ -76,27 +67,10 @@ public class ControllerShop implements ActionListener {
 
 	}
 
-	private SerializableStrategy getStrat() {
-		SerializableStrategy binaryStrat;
-		switch (strat) { // 0=bin, 1=beans, 2=xstream
-			case 0:
-				binaryStrat = new BinaryStrategy();
-				break;
-			case 1:
-				binaryStrat = new XMLStrategy();
-				break;
-			default:
-				binaryStrat = new XStreamStrategy();
-				break;
-		}
-
-		return binaryStrat;
-	}
-
 	private void load() {
 		m.setProductList(new ProductList());
 
-		SerializableStrategy binaryStrat = getStrat();
+		SerializableStrategy binaryStrat = v.getSelectedStrat();
 		long maxID = model.Product.getIdgen().getNextID() - 1;
 
 		try {
@@ -125,7 +99,7 @@ public class ControllerShop implements ActionListener {
 	}
 
 	private void save() {
-		SerializableStrategy binaryStrat = getStrat();
+		SerializableStrategy binaryStrat = v.getSelectedStrat();
 
 		try {
 			for (Product p : m)
