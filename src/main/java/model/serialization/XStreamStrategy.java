@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.SingleValueConverter;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import fpt.com.Product;
@@ -39,8 +40,12 @@ public class XStreamStrategy implements fpt.com.SerializableStrategy {
 	@Override
 	public void writeObject(Product obj) throws IOException {
 		if (oos == null) {
+			xstream.useAttributeFor(model.Product.class, "id");
+			xstream.alias("ware", model.Product.class);
+			xstream.aliasField("preis", model.Product.class, "price");
+			xstream.aliasField("anzahl", model.Product.class, "quantity");
 			try {
-				oos = xstream.createObjectOutputStream(new FileWriter("productsx.xml"));
+				oos = xstream.createObjectOutputStream(new FileWriter("productsx.xml"), "waren");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
