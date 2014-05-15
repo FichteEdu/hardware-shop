@@ -31,19 +31,22 @@ public class BinaryStrategy implements fpt.com.SerializableStrategy {
 
 	@Override
 	public void writeObject(Product obj) throws IOException {
-		if (fis == null) {
+		if (fos == null) {
 			fos = new FileOutputStream("products.ser");
 			oos = new ObjectOutputStream(fos);
 		}
 		oos.writeObject(obj); // write Object
-		oos.flush();
 	}
 
 	@Override
 	public void close() throws IOException {
 		if (fis != null)
 			fis.close();
+		if (ois != null)
+			ois.close();
 		if (fos != null)
-			fos.close();		
+			fos.close();
+		if (oos != null)
+			oos.close();
 	}
 }
