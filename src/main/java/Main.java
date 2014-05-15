@@ -16,7 +16,7 @@ public class Main {
 		// TODO: there is no ControllerCustomer yet, so do it quick and dirty
 		// The view should not know about its model at creation time, but this
 		// will be taken care of at a later point in time.
-		// 
+		//
 		ModelCustomer mc = new ModelCustomer();
 		ViewCustomer vc = new ViewCustomer(mc);
 		mc.addObserver(vc);

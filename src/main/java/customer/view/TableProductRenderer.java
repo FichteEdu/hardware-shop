@@ -9,7 +9,7 @@ import fpt.com.Product;
 // TODO make this into a TableModel (because currently it doesn't work!)
 public class TableProductRenderer {
 
-	private Object[][]		data	= { {"", "" ,"" ,""} };
+	private Object[][]		data	= { { "", "", "", "" } };
 	private static String[]	title	= { "Name", "Price", "MaxCount", "OrderCount" };
 	private JTable			table;
 	private ProductList		plist;

@@ -14,7 +14,7 @@ public class IDGenerator {
 	public void resetID() {
 		this.nextID = 0;
 	}
-	
+
 	public long getNextID() {
 		return nextID;
 	}
