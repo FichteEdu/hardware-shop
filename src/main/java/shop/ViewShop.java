@@ -28,6 +28,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import model.serialization.BinaryStrategy;
+import model.serialization.OpenJPAStrategy;
 import model.serialization.XMLStrategy;
 import model.serialization.XStreamStrategy;
 import shop.view.ListProductRenderer;
@@ -49,6 +50,7 @@ public class ViewShop extends JFrame implements Observer {
 	private JRadioButtonMenuItem	binarySer;
 	private JRadioButtonMenuItem	beansSer;
 	private JRadioButtonMenuItem	xstreamSer;
+	private JRadioButtonMenuItem	oJPASer;
 	private JMenuItem				loadSer;
 	private JMenuItem				saveSer;
 
@@ -100,16 +102,19 @@ public class ViewShop extends JFrame implements Observer {
 		binarySer = new JRadioButtonMenuItem("Bin", true);
 		beansSer = new JRadioButtonMenuItem("beans");
 		xstreamSer = new JRadioButtonMenuItem("xstream");
+		oJPASer = new JRadioButtonMenuItem("OpenJPA Serialization 10");
 
 		// Button group for serialization startegy
 		ButtonGroup serializeGroup = new ButtonGroup();
 		serializeGroup.add(beansSer);
 		serializeGroup.add(binarySer);
 		serializeGroup.add(xstreamSer);
-
+		serializeGroup.add(oJPASer);
+		
 		serStrat.add(binarySer);
 		serStrat.add(beansSer);
 		serStrat.add(xstreamSer);
+		serStrat.add(oJPASer);
 		jMenuBar.add(serStrat);
 
 		JMenu loadSaveStrat = new JMenu("Load/Save");
@@ -222,6 +227,8 @@ public class ViewShop extends JFrame implements Observer {
 			return new BinaryStrategy();
 		if (beansSer.isSelected())
 			return new XMLStrategy();
+		if (oJPASer.isSelected())
+			return new OpenJPAStrategy();
 		else
 			return new XStreamStrategy();
 	}
