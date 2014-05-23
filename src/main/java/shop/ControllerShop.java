@@ -50,6 +50,7 @@ public class ControllerShop implements ActionListener {
 				case "Bin":
 				case "beans":
 				case "xstream":
+				case "OpenJPA Serialization 10":
 					break;
 				case "save":
 					save();
