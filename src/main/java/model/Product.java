@@ -12,13 +12,13 @@ public class Product implements fpt.com.Product {
 
 	@Id
 	@GeneratedValue (strategy=GenerationType.SEQUENCE, generator="products_SEQ")
-	@SequenceGenerator (name="products_SEQ", sequenceName="products_id_seq ", allocationSize=1)
+	@SequenceGenerator (name="products_SEQ", sequenceName="products_id_seq", allocationSize=1)
 	private long 						id;
 	private String						name;
 	private double						price;
 	private int							quantity;
 
-	// We need this for Beans serialization
+	// We need this for Beans & OpenJPA serialization
 	public Product() {
 		this(/*0,*/ "", 0, 0);
 	}
