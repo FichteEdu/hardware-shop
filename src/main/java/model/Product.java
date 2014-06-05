@@ -1,41 +1,48 @@
 package model;
 
+import javax.persistence.*;
+
+@Entity()
+@Table(name="products")
 public class Product implements fpt.com.Product {
 
 	private static final long			serialVersionUID	= 1001L;
 
-	private static final IDGenerator	idgen				= new IDGenerator();
+	//private static final IDGenerator	idgen				= new IDGenerator();
 
-	private long						id;
+	@Id
+	@GeneratedValue (strategy=GenerationType.SEQUENCE, generator="products_SEQ")
+	@SequenceGenerator (name="products_SEQ", sequenceName="products_id_seq ", allocationSize=1)
+	private long 						id;
 	private String						name;
 	private double						price;
 	private int							quantity;
 
 	// We need this for Beans serialization
 	public Product() {
-		this(0, "", 0, 0);
+		this(/*0,*/ "", 0, 0);
 	}
 
 	// Generate the id only for this type of constructor
-	public Product(	String name, double price, int quantity) {
-		this(0, name, price, quantity);
-		try {
-			setId(idgen.generate());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	public Product(	String name, double price, int quantity) {
+//		this(/*0,*/ name, price, quantity);
+//		try {
+//			setId(id);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
-	public Product(	long id, String name, double price, int quantity) {
-		setId(id);
+	public Product(	/*long id,*/ String name, double price, int quantity) {
+		//setId(id);
 		setName(name);
 		setPrice(price);
 		setQuantity(quantity);
 	}
 
-	public static IDGenerator getIdgen() {
-		return idgen;
-	}
+//	public static IDGenerator getIdgen() {
+//		return idgen;
+//	}
 
 	@Override
 	public long getId() {

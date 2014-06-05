@@ -1,4 +1,10 @@
+# compiled binary files
 *.class
+
+# files for serialization
 products.ser
 products.xml
 productsx.xml
+
+# maven build results
+target/
