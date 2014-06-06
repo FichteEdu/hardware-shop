@@ -1,16 +1,48 @@
 package problem4;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
-
 public class Main {
 
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws InterruptedException {
-		BlockingQueue<Customer> q = new LinkedBlockingQueue<>();
-		new Thread(new Acquisition(q)).start();
-		Thread.sleep(500);
-		new Thread(new Cashpoint(q)).start();
+		// Array to store all cashpoints
+		Cashpoint[] cs = new Cashpoint[6];
+
+		// Create cashpoints
+		for (int i = 0; i < cs.length; i++) {
+			cs[i] = new Cashpoint("Cashpoint " + (i + 1));
+			cs[i].start();
+		}
+
+		// Open one cashpoint initially
+		cs[0].open();
+
+		// Create acquisition
+		Thread aqThread = new Acquisition("Acquisition", cs, 6, 8);
+		aqThread.start();
+
+		// Now we wait for all cashpoints to close
+		boolean someOpen;
+		do {
+			someOpen = false;
+			for (Cashpoint c : cs) {
+				someOpen |= !c.isClosed();
+			}
+
+			Thread.sleep(100);
+		} while (someOpen);
+
+		System.out.println("All cashpoints are closed. Exiting...");
+
+		// Stop threads
+		// Thread.stop() is deprecated but suits our needs just perfectly here
+		if (aqThread.isAlive()) {
+			System.out.println("WARNING! Cashpoints are closed despite Acquisition still running");
+			aqThread.stop();
+		}
+		for (Thread c : cs) {
+			c.stop();
+		}
+
 	}
 
 }
