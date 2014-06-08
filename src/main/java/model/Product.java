@@ -20,7 +20,7 @@ public class Product implements fpt.com.Product {
 
 	// We need this for Beans & OpenJPA serialization
 	public Product() {
-		this(/*0,*/ "", 0, 0);
+		this(0, "", 0, 0);
 	}
 
 	// Generate the id only for this type of constructor
@@ -33,8 +33,14 @@ public class Product implements fpt.com.Product {
 //		}
 //	}
 
-	public Product(	/*long id,*/ String name, double price, int quantity) {
-		//setId(id);
+	public Product(long id, String name, double price, int quantity) {
+		setId(id);
+		setName(name);
+		setPrice(price);
+		setQuantity(quantity);
+	}
+	
+	public Product(String name, double price, int quantity) {
 		setName(name);
 		setPrice(price);
 		setQuantity(quantity);
