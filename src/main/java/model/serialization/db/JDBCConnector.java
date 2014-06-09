@@ -60,11 +60,11 @@ public class JDBCConnector {
 			}
 		} else {
 			try {
-				new SQLException("There's no entry with such an ID");
 				return null;
 			} finally {
 				rs.close();
 				pstmt.close();
+				throw new SQLException("There's no entry with such an ID");
 			}
 		}
 	}	
