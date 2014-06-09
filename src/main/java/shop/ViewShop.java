@@ -28,9 +28,9 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import model.serialization.BinaryStrategy;
-import model.serialization.OpenJPAStrategy;
 import model.serialization.XMLStrategy;
 import model.serialization.XStreamStrategy;
+import model.serialization.db.OpenJPAStrategy;
 import shop.view.ListProductRenderer;
 import fpt.com.Product;
 import fpt.com.ProductList;

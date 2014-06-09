@@ -10,9 +10,6 @@ public class Product implements fpt.com.Product {
 
 	//private static final IDGenerator	idgen				= new IDGenerator();
 
-	@Id
-	@GeneratedValue (strategy=GenerationType.SEQUENCE, generator="products_SEQ")
-	@SequenceGenerator (name="products_SEQ", sequenceName="products_id_seq", allocationSize=1)
 	private long 						id;
 	private String						name;
 	private double						price;
@@ -51,6 +48,8 @@ public class Product implements fpt.com.Product {
 //	}
 
 	@Override
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY, generator = "products_SEQ")
 	public long getId() {
 		return id;
 	}
@@ -61,6 +60,7 @@ public class Product implements fpt.com.Product {
 	}
 
 	@Override
+	@Column(name = "price")
 	public double getPrice() {
 		return price;
 	}
@@ -71,6 +71,7 @@ public class Product implements fpt.com.Product {
 	}
 
 	@Override
+	@Column(name = "quantity")
 	public int getQuantity() {
 		return quantity;
 	}
@@ -81,6 +82,7 @@ public class Product implements fpt.com.Product {
 	}
 
 	@Override
+	@Column(name = "name")
 	public String getName() {
 		return name;
 	}
