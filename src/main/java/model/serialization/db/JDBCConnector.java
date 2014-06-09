@@ -58,15 +58,11 @@ public class JDBCConnector {
 				rs.close();
 				pstmt.close();
 			}
-		} else {
-			try {
-				return null;
-			} finally {
-				rs.close();
-				pstmt.close();
-				throw new SQLException("There's no entry with such an ID");
-			}
 		}
+		
+		rs.close();
+		pstmt.close();
+		throw new SQLException("There's no entry with such an ID");
 	}	
 	
 	public void dumpMetaData() throws SQLException {
