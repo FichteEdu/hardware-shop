@@ -45,7 +45,7 @@ public class Acquisition extends Thread {
 						}
 
 				// Check if queue is full and terminate
-				if (l > maxlen) {
+				if (l >= maxlen) {
 					out("%s reached maximum lenght of %d; Terminating...", minCashpoint.getName(),
 							maxlen);
 					return;
