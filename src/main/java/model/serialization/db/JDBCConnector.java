@@ -2,7 +2,8 @@ package model.serialization.db;
 
 import java.sql.*;
 
-import model.Product;
+//import model.Product;
+import fpt.com.Product;
 
 public class JDBCConnector {
 	
@@ -26,7 +27,7 @@ public class JDBCConnector {
 		pstmt.close();
 	}
 	
-	public long insert (String name, double price, int quantity) throws SQLException {
+	public long insert(String name, double price, int quantity) throws SQLException {
 		
 		PreparedStatement pstmt = con.prepareStatement("INSERT INTO products (name, quantity, price) VALUES(?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 		pstmt.setString(1, name);
@@ -44,26 +45,55 @@ public class JDBCConnector {
 		return key.longValue();
 	}
 	
-	public Product read (long productId) throws SQLException {
+	public Product read(long productId) throws SQLException {
 		
 		PreparedStatement pstmt = con.prepareStatement("SELECT id, name, price, quantity FROM products WHERE id=?");
 		pstmt.setLong(1, productId);
 		
 		ResultSet rs = pstmt.executeQuery();
 		
-		if (rs != null && rs.next()) {
-			try {
-				return new Product(productId, rs.getString(2), rs.getDouble(3), rs.getInt(4));
-			} finally {
-				rs.close();
-				pstmt.close();
+		try {
+			if (rs != null && rs.next()) {
+				return new model.Product(productId, rs.getString(2), rs.getDouble(3), rs.getInt(4));				
 			}
+		} finally {
+			rs.close();
+			pstmt.close();
+		}		
+		
+		throw new SQLException("There's no entry with such an ID");
+	}
+	
+	public Product[] readSomeLast(int n) throws SQLException {
+		
+		Product[] prodList = new Product[n];
+		
+		PreparedStatement pstmt = con.prepareStatement("SELECT id, name, price, quantity FROM products ORDER BY id DESC");
+		
+		pstmt.setMaxRows(n);
+		
+		ResultSet rs = pstmt.executeQuery();
+		
+		try {
+			for (int i=0; i < n; i++) {
+				if (rs != null && rs.next()) {
+					prodList[i] = new model.Product(rs.getLong(1), rs.getString(2), rs.getDouble(3), rs.getInt(4));
+				}
+			}
+		} finally {
+			rs.close();
+			pstmt.close();
 		}
 		
-		rs.close();
-		pstmt.close();
-		throw new SQLException("There's no entry with such an ID");
-	}	
+		
+		return prodList;		
+	}
+	
+	public void writeSome(Product[] products) throws SQLException {
+		for (Product p: products) {
+			insert(p);
+		}
+	}
 	
 	public void dumpMetaData() throws SQLException {
 		

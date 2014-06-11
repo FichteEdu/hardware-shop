@@ -50,7 +50,7 @@ public class ViewShop extends JFrame implements Observer {
 	private JRadioButtonMenuItem	binarySer;
 	private JRadioButtonMenuItem	beansSer;
 	private JRadioButtonMenuItem	xstreamSer;
-	private JRadioButtonMenuItem	oJPASer;
+	private JRadioButtonMenuItem	JDBC;
 	private JMenuItem				loadSer;
 	private JMenuItem				saveSer;
 
@@ -99,22 +99,24 @@ public class ViewShop extends JFrame implements Observer {
 		// JMenuBar
 		JMenuBar jMenuBar = new JMenuBar();
 		JMenu serStrat = new JMenu("Serialization");
-		binarySer = new JRadioButtonMenuItem("Bin", true);
+		binarySer = new JRadioButtonMenuItem("Bin");
 		beansSer = new JRadioButtonMenuItem("beans");
 		xstreamSer = new JRadioButtonMenuItem("xstream");
-		oJPASer = new JRadioButtonMenuItem("OpenJPA Serialization 10");
+		JDBC = new JRadioButtonMenuItem("JDBC upload", true);
 
 		// Button group for serialization startegy
 		ButtonGroup serializeGroup = new ButtonGroup();
 		serializeGroup.add(beansSer);
 		serializeGroup.add(binarySer);
 		serializeGroup.add(xstreamSer);
-		serializeGroup.add(oJPASer);
+		serializeGroup.add(JDBC);
 		
-		serStrat.add(binarySer);
-		serStrat.add(beansSer);
-		serStrat.add(xstreamSer);
-		serStrat.add(oJPASer);
+		
+		//Implementation of local Serialization no longer required, therefore, to simplify things, only uploading to DB via JDBC is made available to the User 
+		//serStrat.add(binarySer);
+		//serStrat.add(beansSer);
+		//serStrat.add(xstreamSer);
+		serStrat.add(JDBC);
 		jMenuBar.add(serStrat);
 
 		JMenu loadSaveStrat = new JMenu("Load/Save");
@@ -222,6 +224,8 @@ public class ViewShop extends JFrame implements Observer {
 	 * 
 	 * @return ^
 	 */
+	
+	/*
 	public SerializableStrategy getSelectedStrat() {
 		if (binarySer.isSelected())
 			return new BinaryStrategy();
@@ -232,6 +236,7 @@ public class ViewShop extends JFrame implements Observer {
 		else
 			return new XStreamStrategy();
 	}
+	*/
 
 	@Override
 	public void update(Observable o, Object arg) {

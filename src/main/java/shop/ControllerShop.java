@@ -3,6 +3,7 @@ package shop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
@@ -11,7 +12,7 @@ import javax.swing.JOptionPane;
 import model.ProductList;
 import fpt.com.Product;
 import fpt.com.SerializableStrategy;
-
+import model.serialization.db.JDBCConnector;
 
 public class ControllerShop implements ActionListener {
 
@@ -50,7 +51,7 @@ public class ControllerShop implements ActionListener {
 				case "Bin":
 				case "beans":
 				case "xstream":
-				case "OpenJPA Serialization 10":
+				case "JDBC upload":
 					break;
 				case "save":
 					save();
@@ -70,7 +71,20 @@ public class ControllerShop implements ActionListener {
 
 	private void load() {
 		m.setProductList(new ProductList());
-
+		
+		JDBCConnector dbconn = new JDBCConnector();
+		try {
+			for (Product p: dbconn.readSomeLast(10)) {
+				m.add(p);
+			}
+		} catch (SQLException e) {
+			System.out.println("Fehler beim Verbinden mit Datenbank");
+			e.printStackTrace();
+		} finally {
+			dbconn.close();
+		}
+		
+		/*
 		SerializableStrategy binaryStrat = v.getSelectedStrat();
 		long maxID = model.Product.getIdgen().getNextID() - 1;
 
@@ -96,10 +110,26 @@ public class ControllerShop implements ActionListener {
 		}
 
 		// And use it to tell the generator which ID to generate next
-		model.Product.getIdgen().setNextID(maxID + 1);
+		model.Product.getIdgen().setNextID(maxID + 1);		
+		*/		
 	}
 
 	private void save() {
+		
+		JDBCConnector dbconn = new JDBCConnector();
+		
+		try {
+			dbconn.writeSome(m.getProductList().toArray(new Product[m.getProductList().size()]));
+		} catch (SQLException e) {
+			System.out.println("Fehler beim Verbinden mit Datenbank");
+			e.printStackTrace();
+		} finally {
+			dbconn.close();
+		}
+		
+		m.changed();
+		
+		/*
 		SerializableStrategy binaryStrat = v.getSelectedStrat();
 
 		try {
@@ -114,7 +144,7 @@ public class ControllerShop implements ActionListener {
 			} catch (IOException e) {
 			}
 		}
-
+		*/
 	}
 
 	/**

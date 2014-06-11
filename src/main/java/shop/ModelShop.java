@@ -49,7 +49,7 @@ public class ModelShop extends Observable implements fpt.com.ProductList {
 	/**
 	 * Signal that we changed something and notify our observers.
 	 */
-	private void changed() {
+	public void changed() {
 		setChanged();
 		notifyObservers();
 	}
