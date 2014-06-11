@@ -1,18 +1,25 @@
 package problem4;
 
+import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 
 public class Cashpoint extends Thread {
 
+	private static final Random		rand	= new Random();
+
+	private Balance					balance;
+
 	private BlockingQueue<Customer>	q;
+
 	private boolean					open	= false;
 	private boolean					opening	= false;
 
-	public Cashpoint(	String name) {
+	public Cashpoint(	String name, Balance balance) {
 		super(name);
 		this.q = new LinkedBlockingQueue<>();
+		this.balance = balance;
 	}
 
 	@Override
@@ -47,7 +54,10 @@ public class Cashpoint extends Thread {
 						// Wait between 6 and 10 seconds
 						Thread.sleep((long) (6000 + 1000 * 4 * Math.random()));
 
-						// out("Finished processing customer %s", c);
+						// Add a random amount between 0 and 50 (with two
+						// decimal digits) to the balance
+						balance.increase(this, (rand.nextInt(5000) + 1) / 100d);
+
 					}
 
 					out("Queue is empty! Closing...");
@@ -111,5 +121,4 @@ public class Cashpoint extends Thread {
 	private void out(String msg, Object... args) {
 		System.out.format(String.format("%s: %s%n", getName(), msg), args);
 	}
-
 }

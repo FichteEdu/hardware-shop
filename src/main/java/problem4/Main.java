@@ -6,10 +6,11 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 		// Array to store all cashpoints
 		Cashpoint[] cs = new Cashpoint[6];
+		Balance balance = new Balance();
 
 		// Create cashpoints
 		for (int i = 0; i < cs.length; i++) {
-			cs[i] = new Cashpoint("Cashpoint " + (i + 1));
+			cs[i] = new Cashpoint("Cashpoint " + (i + 1), balance);
 			cs[i].start();
 		}
 
