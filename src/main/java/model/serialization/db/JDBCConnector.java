@@ -53,6 +53,7 @@ public class JDBCConnector implements AutoCloseable {
 			pstmt.setLong(1, productId);
 
 			try (ResultSet rs = pstmt.executeQuery()) {
+				rs.next();
 				return new model.Product(productId, rs.getString(2), rs.getDouble(3), rs.getInt(4));
 			}
 		}
@@ -123,6 +124,7 @@ public class JDBCConnector implements AutoCloseable {
 		DatabaseMetaData dmd = con.getMetaData();
 		System.out.println("URL: " + dmd.getURL());
 		System.out.println("Username: " + dmd.getUserName());
+		System.out.println();
 		System.out.println("Tables: ");
 		try (ResultSet rs = dmd.getTables(null, null, null, null)) {
 			while (rs.next()) {
