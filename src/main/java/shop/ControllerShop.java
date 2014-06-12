@@ -54,11 +54,19 @@ public class ControllerShop implements ActionListener {
 					break;
 
 				case "Delete (selected)":
-					if (v.getStratType() == ViewShop.StratType.DATABASE)
-						JOptionPane.showMessageDialog(null,
-								"Deleting is not supported for databases");
-					for (Product pr : v.getSelected())
-						m.delete(pr);
+					boolean database = v.getStratType() == ViewShop.StratType.DATABASE;
+					boolean prompted = false; // Only prompt once
+					for (Product pr : v.getSelected()) {
+						if (database && pr.getId() != -1) {
+							if (!prompted) {
+								JOptionPane.showMessageDialog(null,
+										"Unable to delete remote products.");
+								prompted = true;
+							}
+						} else {
+							m.delete(pr);
+						}
+					}
 					break;
 
 				default:
