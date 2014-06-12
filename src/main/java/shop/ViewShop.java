@@ -51,6 +51,7 @@ public class ViewShop extends JFrame implements Observer {
 	private JRadioButtonMenuItem	beansSer;
 	private JRadioButtonMenuItem	xstreamSer;
 	private JRadioButtonMenuItem	JDBC;
+	private JRadioButtonMenuItem	oJPASer;
 	private JMenuItem				loadSer;
 	private JMenuItem				saveSer;
 
@@ -58,7 +59,7 @@ public class ViewShop extends JFrame implements Observer {
 		setTitle("ViewShop");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(450, 300);
-		
+
 		JComponent content = (JComponent) getContentPane();
 		content.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -98,11 +99,12 @@ public class ViewShop extends JFrame implements Observer {
 
 		// JMenuBar
 		JMenuBar jMenuBar = new JMenuBar();
-		JMenu serStrat = new JMenu("Serialization");
+		JMenu serStratMenu = new JMenu("Serialization");
 		binarySer = new JRadioButtonMenuItem("Bin");
 		beansSer = new JRadioButtonMenuItem("beans");
 		xstreamSer = new JRadioButtonMenuItem("xstream");
 		JDBC = new JRadioButtonMenuItem("JDBC upload", true);
+		oJPASer = new JRadioButtonMenuItem("OpenJPA Serialization 10");
 
 		// Button group for serialization startegy
 		ButtonGroup serializeGroup = new ButtonGroup();
@@ -110,14 +112,14 @@ public class ViewShop extends JFrame implements Observer {
 		serializeGroup.add(binarySer);
 		serializeGroup.add(xstreamSer);
 		serializeGroup.add(JDBC);
-		
-		
-		//Implementation of local Serialization no longer required, therefore, to simplify things, only uploading to DB via JDBC is made available to the User 
-		//serStrat.add(binarySer);
-		//serStrat.add(beansSer);
-		//serStrat.add(xstreamSer);
-		serStrat.add(JDBC);
-		jMenuBar.add(serStrat);
+		serializeGroup.add(oJPASer);
+
+		serStratMenu.add(binarySer);
+		serStratMenu.add(beansSer);
+		serStratMenu.add(xstreamSer);
+		serStratMenu.add(JDBC);
+		serStratMenu.add(oJPASer);
+		jMenuBar.add(serStratMenu);
 
 		JMenu loadSaveStrat = new JMenu("Load/Save");
 		loadSer = new JMenuItem("load");
@@ -224,8 +226,6 @@ public class ViewShop extends JFrame implements Observer {
 	 * 
 	 * @return ^
 	 */
-	
-	/*
 	public SerializableStrategy getSelectedStrat() {
 		if (binarySer.isSelected())
 			return new BinaryStrategy();
@@ -233,10 +233,10 @@ public class ViewShop extends JFrame implements Observer {
 			return new XMLStrategy();
 		if (oJPASer.isSelected())
 			return new OpenJPAStrategy();
+		// TODO JBDCStrategy
 		else
 			return new XStreamStrategy();
 	}
-	*/
 
 	@Override
 	public void update(Observable o, Object arg) {

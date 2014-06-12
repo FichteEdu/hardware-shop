@@ -2,17 +2,15 @@ package shop;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import model.ProductList;
-import fpt.com.Product;
-import fpt.com.SerializableStrategy;
 import model.serialization.db.JDBCConnector;
+import fpt.com.Product;
+
 
 public class ControllerShop implements ActionListener {
 
@@ -52,6 +50,7 @@ public class ControllerShop implements ActionListener {
 				case "beans":
 				case "xstream":
 				case "JDBC upload":
+				case "OpenJPA Serialization 10":
 					break;
 				case "save":
 					save();
@@ -70,15 +69,18 @@ public class ControllerShop implements ActionListener {
 	}
 
 	private void load() {
+		// Empty the current product list
 		m.setProductList(new ProductList());
-		
+
+		// TODO move this to JBDCStrategy
 		JDBCConnector dbconn = new JDBCConnector();
 		try {
-			for (Product p: dbconn.readSomeLast(10)) {
+			// Only read the last 10 entries in the database
+			for (Product p : dbconn.readSomeLast(10)) {
 				m.add(p);
 			}
 		} catch (SQLException e) {
-			System.out.println("Fehler beim Verbinden mit Datenbank");
+			System.out.println("Unable to connect to database");
 			e.printStackTrace();
 		} finally {
 			dbconn.close();
@@ -111,13 +113,13 @@ public class ControllerShop implements ActionListener {
 
 		// And use it to tell the generator which ID to generate next
 		model.Product.getIdgen().setNextID(maxID + 1);		
-		*/		
+		*/
 	}
 
 	private void save() {
-		
+
 		JDBCConnector dbconn = new JDBCConnector();
-		
+
 		try {
 			dbconn.writeSome(m.getProductList().toArray(new Product[m.getProductList().size()]));
 		} catch (SQLException e) {
@@ -126,7 +128,10 @@ public class ControllerShop implements ActionListener {
 		} finally {
 			dbconn.close();
 		}
-		
+
+		// Call the model's changed method (which we made public) because we
+		// changed the products' ids within the containing ProductList that m
+		// provides (and we render that). This is the easiest way to do this.
 		m.changed();
 		
 		/*

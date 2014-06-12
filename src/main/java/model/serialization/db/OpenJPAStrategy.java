@@ -1,21 +1,18 @@
 package model.serialization.db;
 
 import java.io.IOException;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
-
-import org.apache.openjpa.persistence.OpenJPAPersistence;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+
+import org.apache.openjpa.persistence.OpenJPAPersistence;
+
 import fpt.com.Product;
-import fpt.com.SerializableStrategy;
 
 public class OpenJPAStrategy implements fpt.com.SerializableStrategy {
 
@@ -23,6 +20,7 @@ public class OpenJPAStrategy implements fpt.com.SerializableStrategy {
 	EntityManager em =  null;
 	EntityTransaction et = null;
 	
+	@Override
 	public Product readObject() throws IOException {
 		emf = getWithoutConfig();
 		//emf = Persistence.createEntityManagerFactory("openjpa", System.getProperties());	
@@ -34,6 +32,7 @@ public class OpenJPAStrategy implements fpt.com.SerializableStrategy {
 		return (Product) obj;
 	}
 
+	@Override
 	public void writeObject(Product obj) throws IOException {
 		emf = getWithoutConfig();
 		//emf = Persistence.createEntityManagerFactory("openjpa", System.getProperties());	
@@ -44,6 +43,7 @@ public class OpenJPAStrategy implements fpt.com.SerializableStrategy {
 		et.commit();
 	}
 
+	@Override
 	public void close() throws IOException {
 		if (em != null)
 			em.close();
