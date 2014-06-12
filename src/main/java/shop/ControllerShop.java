@@ -2,20 +2,26 @@ package shop;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
-import model.ProductList;
-import model.serialization.db.JDBCConnector;
+import model.IDGenerator;
+import model.serialization.db.DatabaseStrategy;
 import fpt.com.Product;
+import fpt.com.SerializableStrategy;
 
 
 public class ControllerShop implements ActionListener {
 
-	private ModelShop	m;
-	private ViewShop	v;
+	private static final int			LAST_N_PRODUCTS	= 10;
+	private static final IDGenerator	idgen			= new IDGenerator();
+
+	private ModelShop					m;
+	private ViewShop					v;
 
 	public ControllerShop() {
 	}
@@ -33,16 +39,32 @@ public class ControllerShop implements ActionListener {
 			switch (btn.getText()) {
 				case "Add":
 					Product p = v.getNewProduct();
-					if (p != null)
-						m.add(p);
+					if (p == null)
+						break;
+					// Generate id if serialize selected
+					if (v.getStratType() == ViewShop.StratType.SERIALIZE) {
+						try {
+							p.setId(idgen.generate());
+						} catch (Exception ex) {
+							ex.printStackTrace(); // Not expected to happen
+						}
+					}
+					// Finally add product
+					m.add(p);
 					break;
+
 				case "Delete (selected)":
+					if (v.getStratType() == ViewShop.StratType.DATABASE)
+						JOptionPane.showMessageDialog(null,
+								"Deleting is not supported for databases");
 					for (Product pr : v.getSelected())
 						m.delete(pr);
 					break;
+
 				default:
 					System.out.println("Unknown Action for button: " + btn.getText());
 			}
+
 		} else if (e.getSource() instanceof JMenuItem) {
 			JMenuItem itm = (JMenuItem) e.getSource();
 			switch (itm.getText()) {
@@ -51,13 +73,19 @@ public class ControllerShop implements ActionListener {
 				case "xstream":
 				case "JDBC upload":
 				case "OpenJPA Serialization 10":
+					// For simplicity, empty the current product list when
+					// switching strategy
+					m.reset();
 					break;
+
 				case "save":
 					save();
 					break;
+
 				case "load":
 					load();
 					break;
+
 				default:
 					System.out.println("Unknown Action for menu item: " + itm.getText());
 					break;
@@ -70,86 +98,85 @@ public class ControllerShop implements ActionListener {
 
 	private void load() {
 		// Empty the current product list
-		m.setProductList(new ProductList());
+		m.reset();
 
-		// TODO move this to JBDCStrategy
-		JDBCConnector dbconn = new JDBCConnector();
-		try {
-			// Only read the last 10 entries in the database
-			for (Product p : dbconn.readSomeLast(10)) {
-				m.add(p);
-			}
-		} catch (SQLException e) {
-			System.out.println("Unable to connect to database");
-			e.printStackTrace();
-		} finally {
-			dbconn.close();
+		switch (v.getStratType()) {
+			case SERIALIZE:
+				SerializableStrategy serStrat = v.getSelectedSerStrat();
+				long maxID = idgen.getNextID() - 1;
+				try {
+					Product p;
+					while (true) {
+						p = serStrat.readObject();
+						if (p == null)
+							break;
+						m.add(p);
+						// Get the highest ID used in the entire list, but only
+						// if it's higher than the current next ID
+						maxID = Math.max(maxID, p.getId());
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Error while reading file.");
+				} finally {
+					try {
+						serStrat.close();
+					} catch (IOException e) {
+					}
+
+					// And use it to tell the generator which ID to generate
+					// next
+					idgen.setNextID(maxID + 1);
+				}
+				break;
+
+			case DATABASE:
+				DatabaseStrategy dataStrat = v.getSelectedDataStrat();
+				try {
+					for (Product p : dataStrat.read(LAST_N_PRODUCTS))
+						m.add(p);
+				} catch (SQLException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Error while reading from database.");
+				}
+				break;
 		}
-		
-		/*
-		SerializableStrategy binaryStrat = v.getSelectedStrat();
-		long maxID = model.Product.getIdgen().getNextID() - 1;
 
-		try {
-			Product p;
-			while (true) {
-				p = binaryStrat.readObject();
-				if (p == null)
-					break;
-				m.add(p);
-				// Get the highest ID used in the entire list, but only if it's
-				// higher than the current next ID
-				maxID = Math.max(maxID, p.getId());
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Error while loading from file.");
-		} finally {
-			try {
-				binaryStrat.close();
-			} catch (IOException e) {
-			}
-		}
-
-		// And use it to tell the generator which ID to generate next
-		model.Product.getIdgen().setNextID(maxID + 1);		
-		*/
 	}
 
 	private void save() {
+		switch (v.getStratType()) {
+			case SERIALIZE:
+				SerializableStrategy serStrat = v.getSelectedSerStrat();
+				try {
+					for (Product p : m)
+						serStrat.writeObject(p);
+				} catch (IOException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Error while saving to file.");
+				} finally {
+					try {
+						serStrat.close();
+					} catch (IOException e) {
+					}
+				}
 
-		JDBCConnector dbconn = new JDBCConnector();
+			case DATABASE:
+				DatabaseStrategy dataStrat = v.getSelectedDataStrat();
+				try {
+					dataStrat.write(v.toArray());
+				} catch (SQLException e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Error while reading from database.");
+				}
 
-		try {
-			dbconn.writeSome(m.getProductList().toArray(new Product[m.getProductList().size()]));
-		} catch (SQLException e) {
-			System.out.println("Fehler beim Verbinden mit Datenbank");
-			e.printStackTrace();
-		} finally {
-			dbconn.close();
+				// Call the model's changed method (which we made public)
+				// because we changed the products' ids within the containing
+				// ProductList that m provides (and we render that).
+				// This is the easiest way to do this.
+				m.changed();
+				break;
 		}
-
-		// Call the model's changed method (which we made public) because we
-		// changed the products' ids within the containing ProductList that m
-		// provides (and we render that). This is the easiest way to do this.
-		m.changed();
-		
-		/*
-		SerializableStrategy binaryStrat = v.getSelectedStrat();
-
-		try {
-			for (Product p : m)
-				binaryStrat.writeObject(p);
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Error while saving to file.");
-		} finally {
-			try {
-				binaryStrat.close();
-			} catch (IOException e) {
-			}
-		}
-		*/
 	}
 
 	/**

@@ -28,8 +28,10 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import model.serialization.BinaryStrategy;
+import model.serialization.JDBCStrategy;
 import model.serialization.XMLStrategy;
 import model.serialization.XStreamStrategy;
+import model.serialization.db.DatabaseStrategy;
 import model.serialization.db.OpenJPAStrategy;
 import shop.view.ListProductRenderer;
 import fpt.com.Product;
@@ -47,13 +49,13 @@ public class ViewShop extends JFrame implements Observer {
 	private JFormattedTextField		ftfPrice;
 	private JFormattedTextField		ftfQuantity;
 
-	private JRadioButtonMenuItem	binarySer;
-	private JRadioButtonMenuItem	beansSer;
-	private JRadioButtonMenuItem	xstreamSer;
-	private JRadioButtonMenuItem	JDBC;
-	private JRadioButtonMenuItem	oJPASer;
-	private JMenuItem				loadSer;
-	private JMenuItem				saveSer;
+	private JRadioButtonMenuItem	binaryRadio;
+	private JRadioButtonMenuItem	beansRadio;
+	private JRadioButtonMenuItem	xstreamRadio;
+	private JRadioButtonMenuItem	jdbcRadio;
+	private JRadioButtonMenuItem	ojpaRadio;
+	private JMenuItem				load;
+	private JMenuItem				save;
 
 	public ViewShop() {
 		setTitle("ViewShop");
@@ -100,33 +102,34 @@ public class ViewShop extends JFrame implements Observer {
 		// JMenuBar
 		JMenuBar jMenuBar = new JMenuBar();
 		JMenu serStratMenu = new JMenu("Serialization");
-		binarySer = new JRadioButtonMenuItem("Bin");
-		beansSer = new JRadioButtonMenuItem("beans");
-		xstreamSer = new JRadioButtonMenuItem("xstream");
-		JDBC = new JRadioButtonMenuItem("JDBC upload", true);
-		oJPASer = new JRadioButtonMenuItem("OpenJPA Serialization 10");
+		binaryRadio = new JRadioButtonMenuItem("Bin");
+		beansRadio = new JRadioButtonMenuItem("beans");
+		xstreamRadio = new JRadioButtonMenuItem("xstream");
+		jdbcRadio = new JRadioButtonMenuItem("JDBC upload", true);
+		ojpaRadio = new JRadioButtonMenuItem("OpenJPA Serialization 10");
 
 		// Button group for serialization startegy
 		ButtonGroup serializeGroup = new ButtonGroup();
-		serializeGroup.add(beansSer);
-		serializeGroup.add(binarySer);
-		serializeGroup.add(xstreamSer);
-		serializeGroup.add(JDBC);
-		serializeGroup.add(oJPASer);
+		serializeGroup.add(beansRadio);
+		serializeGroup.add(binaryRadio);
+		serializeGroup.add(xstreamRadio);
+		serializeGroup.add(jdbcRadio);
+		serializeGroup.add(ojpaRadio);
 
-		serStratMenu.add(binarySer);
-		serStratMenu.add(beansSer);
-		serStratMenu.add(xstreamSer);
-		serStratMenu.add(JDBC);
-		serStratMenu.add(oJPASer);
+		serStratMenu.add(binaryRadio);
+		serStratMenu.add(beansRadio);
+		serStratMenu.add(xstreamRadio);
+		serStratMenu.addSeparator();
+		serStratMenu.add(jdbcRadio);
+		serStratMenu.add(ojpaRadio);
 		jMenuBar.add(serStratMenu);
 
 		JMenu loadSaveStrat = new JMenu("Load/Save");
-		loadSer = new JMenuItem("load");
-		saveSer = new JMenuItem("save");
+		load = new JMenuItem("load");
+		save = new JMenuItem("save");
 
-		loadSaveStrat.add(loadSer);
-		loadSaveStrat.add(saveSer);
+		loadSaveStrat.add(load);
+		loadSaveStrat.add(save);
 
 		jMenuBar.add(loadSaveStrat);
 		setJMenuBar(jMenuBar);
@@ -164,7 +167,8 @@ public class ViewShop extends JFrame implements Observer {
 			if (child instanceof JMenu) {
 				JMenu menu = (JMenu) child;
 				for (int i = 0; i < menu.getItemCount(); i++) {
-					menu.getItem(i).addActionListener(al);
+					if (menu.getItem(i) != null) // exclude separators
+						menu.getItem(i).addActionListener(al);
 				}
 			}
 			if (child instanceof JButton) {
@@ -226,16 +230,26 @@ public class ViewShop extends JFrame implements Observer {
 	 * 
 	 * @return ^
 	 */
-	public SerializableStrategy getSelectedStrat() {
-		if (binarySer.isSelected())
+	public SerializableStrategy getSelectedSerStrat() {
+		if (binaryRadio.isSelected())
 			return new BinaryStrategy();
-		if (beansSer.isSelected())
+		if (beansRadio.isSelected())
 			return new XMLStrategy();
-		if (oJPASer.isSelected())
-			return new OpenJPAStrategy();
-		// TODO JBDCStrategy
 		else
 			return new XStreamStrategy();
+	}
+
+	/**
+	 * Get the selected database strategy (from menu radios)
+	 * 
+	 * @return ^
+	 */
+	public DatabaseStrategy getSelectedDataStrat() {
+		if (jdbcRadio.isSelected())
+			return new JDBCStrategy();
+		else
+			return null;
+		// TODO return new OpenJPAStrategy();
 	}
 
 	@Override
@@ -261,11 +275,11 @@ public class ViewShop extends JFrame implements Observer {
 	}
 
 	/**
-	 * Convert the saved ProductList to an array for JList
+	 * Convert the saved ProductList to an array
 	 * 
 	 * @return ^
 	 */
-	private Product[] toArray() {
+	public Product[] toArray() {
 		Product[] arr = new Product[plist.size()];
 		Iterator<Product> it = plist.iterator();
 		int i = 0;
@@ -279,5 +293,16 @@ public class ViewShop extends JFrame implements Observer {
 		box.add(c);
 		box.setBorder(BorderFactory.createTitledBorder(title));
 		return box;
+	}
+
+	public StratType getStratType() {
+		if (ojpaRadio.isSelected() || jdbcRadio.isSelected()) {
+			return StratType.DATABASE;
+		} else
+			return StratType.SERIALIZE;
+	}
+
+	public enum StratType {
+		SERIALIZE, DATABASE;
 	}
 }

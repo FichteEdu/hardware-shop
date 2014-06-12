@@ -7,29 +7,22 @@ import javax.persistence.*;
 @Table(name = "products")
 public class Product implements fpt.com.Product {
 
-	private static final long	serialVersionUID	= 1001L;
+	private static final long			serialVersionUID	= 1001L;
 
-	// private static final IDGenerator idgen = new IDGenerator();
 
-	private long				id;
-	private String				name;
-	private double				price;
-	private int					quantity;
+	private long						id;
+	private String						name;
+	private double						price;
+	private int							quantity;
 
 	// We need this for Beans & OpenJPA serialization
 	public Product() {
-		this(0, "", 0, 0);
+		this("", 0, 0);
 	}
 
-	// Generate the id only for this type of constructor
-	// public Product( String name, double price, int quantity) {
-	// this(/*0,*/ name, price, quantity);
-	// try {
-	// setId(id);
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// }
+	public Product(	String name, double price, int quantity) {
+		this(-1, name, price, quantity);
+	}
 
 	public Product(	long id, String name, double price, int quantity) {
 		setId(id);
@@ -37,16 +30,6 @@ public class Product implements fpt.com.Product {
 		setPrice(price);
 		setQuantity(quantity);
 	}
-
-	public Product(	String name, double price, int quantity) {
-		setName(name);
-		setPrice(price);
-		setQuantity(quantity);
-	}
-
-	// public static IDGenerator getIdgen() {
-	// return idgen;
-	// }
 
 	@Override
 	@Id
