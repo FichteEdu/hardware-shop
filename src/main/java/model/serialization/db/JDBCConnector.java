@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import fpt.com.Product;
 
@@ -81,6 +82,8 @@ public class JDBCConnector implements AutoCloseable {
 				}
 			}
 
+			// Reverse list to have the last n products back in ascending order
+			Collections.reverse(prodList);
 			return prodList.toArray(new Product[0]);
 		}
 	}
