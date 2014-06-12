@@ -44,6 +44,17 @@ public class Product implements fpt.com.Product {
 	}
 
 	@Override
+	@Column(name = "name")
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
 	@Column(name = "price")
 	public double getPrice() {
 		return price;
@@ -63,17 +74,6 @@ public class Product implements fpt.com.Product {
 	@Override
 	public void setQuantity(int quantity) {
 		this.quantity = Math.abs(quantity);
-	}
-
-	@Override
-	@Column(name = "name")
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void setName(String name) {
-		this.name = name;
 	}
 
 }

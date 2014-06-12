@@ -248,8 +248,7 @@ public class ViewShop extends JFrame implements Observer {
 		if (jdbcRadio.isSelected())
 			return new JDBCStrategy();
 		else
-			return null;
-		// TODO return new OpenJPAStrategy();
+			return new OpenJPAStrategy();
 	}
 
 	@Override

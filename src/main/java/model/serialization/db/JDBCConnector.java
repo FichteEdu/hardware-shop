@@ -46,15 +46,15 @@ public class JDBCConnector implements AutoCloseable {
 		}
 	}
 
-	public Product read(long productId) throws SQLException {
+	public Product read(long id) throws SQLException {
 		try (
 				PreparedStatement pstmt = con
 						.prepareStatement("SELECT id, name, price, quantity FROM products WHERE id=?")) {
-			pstmt.setLong(1, productId);
+			pstmt.setLong(1, id);
 
 			try (ResultSet rs = pstmt.executeQuery()) {
 				rs.next();
-				return new model.Product(productId, rs.getString(2), rs.getDouble(3), rs.getInt(4));
+				return new model.Product(id, rs.getString(2), rs.getDouble(3), rs.getInt(4));
 			}
 		}
 
@@ -110,7 +110,7 @@ public class JDBCConnector implements AutoCloseable {
 				}
 			}
 
-			return (Product[]) prodList.toArray();
+			return prodList.toArray(new Product[0]);
 		}
 	}
 
