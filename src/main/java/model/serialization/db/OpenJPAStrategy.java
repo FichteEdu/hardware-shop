@@ -22,8 +22,10 @@ public class OpenJPAStrategy implements DatabaseStrategy {
 		try (OpenJPAConnector con = new OpenJPAConnector()) {
 			for (Product p : products)
 				// Only write to database if the id is -1 (empty)
-				if (p.getId() == -1)
+				if (p.getId() == -1) {
+					p.setId(0); // Assign default value again because OpenJPA needs it
 					con.insert(p);
+				}
 		}
 	}
 

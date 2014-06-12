@@ -95,7 +95,7 @@ public class OpenJPAConnector implements AutoCloseable {
 		map.put("openjpa.RuntimeUnenhancedClasses", "supported");
 
 		List<Class<?>> types = new ArrayList<Class<?>>();
-		types.add(Product.class);
+		types.add(model.Product.class);
 		if (!types.isEmpty()) {
 			StringBuffer buf = new StringBuffer();
 			for (Class<?> c : types) {

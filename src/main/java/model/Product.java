@@ -73,7 +73,8 @@ public class Product implements fpt.com.Product {
 
 	@Override
 	public void setQuantity(int quantity) {
-		this.quantity = Math.abs(quantity);
+		//this.quantity = Math.abs(quantity); // OpenJPA doesn't like that
+		this.quantity = quantity;
 	}
 
 }
