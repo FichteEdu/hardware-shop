@@ -1,99 +1,113 @@
 package model.serialization.db;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 
-// import model.Product;
 import fpt.com.Product;
 
 
-public class JDBCConnector {
+public class JDBCConnector implements AutoCloseable {
 
 	private Connection	con;
 
-	public void insert(Product product) throws SQLException {
+	public JDBCConnector() throws SQLException, ClassNotFoundException {
+		Class.forName("org.postgresql.Driver");
 
-		PreparedStatement pstmt = con.prepareStatement(
-				"INSERT INTO products (name, quantity, price) VALUES(?, ?, ?)",
-				Statement.RETURN_GENERATED_KEYS);
-		pstmt.setString(1, product.getName());
-		pstmt.setDouble(2, product.getPrice());
-		pstmt.setInt(3, product.getQuantity());
-		pstmt.executeUpdate();
+		con = DriverManager.getConnection("jdbc:postgresql://java.is.uni-due.de/ws1011", "ws1011",
+				"ftpw10");
+	}
 
-		ResultSet rs = pstmt.getGeneratedKeys();
-		rs.next();
-		Integer key = rs.getInt(1);
-
-		product.setId(key.longValue());
-
-		rs.close();
-		pstmt.close();
+	public void insert(Product p) throws SQLException {
+		p.setId(insert(p.getName(), p.getPrice(), p.getQuantity()));
 	}
 
 	public long insert(String name, double price, int quantity) throws SQLException {
+		try (
+				PreparedStatement pstmt = con.prepareStatement(
+						"INSERT INTO products (name, quantity, price) VALUES(?, ?, ?)",
+						Statement.RETURN_GENERATED_KEYS)) {
+			pstmt.setString(1, name);
+			pstmt.setDouble(2, price);
+			pstmt.setInt(3, quantity);
+			pstmt.executeUpdate();
 
-		PreparedStatement pstmt = con.prepareStatement(
-				"INSERT INTO products (name, quantity, price) VALUES(?, ?, ?)",
-				Statement.RETURN_GENERATED_KEYS);
-		pstmt.setString(1, name);
-		pstmt.setDouble(2, price);
-		pstmt.setInt(3, quantity);
-		pstmt.executeUpdate();
-
-		ResultSet rs = pstmt.getGeneratedKeys();
-		rs.next();
-		Integer key = rs.getInt(1);
-
-		rs.close();
-		pstmt.close();
-
-		return key.longValue();
+			try (ResultSet rs = pstmt.getGeneratedKeys()) {
+				rs.next();
+				Integer key = rs.getInt(1);
+				return key.longValue();
+			}
+		}
 	}
 
 	public Product read(long productId) throws SQLException {
+		try (
+				PreparedStatement pstmt = con
+						.prepareStatement("SELECT id, name, price, quantity FROM products WHERE id=?")) {
+			pstmt.setLong(1, productId);
 
-		PreparedStatement pstmt = con
-				.prepareStatement("SELECT id, name, price, quantity FROM products WHERE id=?");
-		pstmt.setLong(1, productId);
-
-		ResultSet rs = pstmt.executeQuery();
-
-		try {
-			if (rs != null && rs.next()) {
+			try (ResultSet rs = pstmt.executeQuery()) {
 				return new model.Product(productId, rs.getString(2), rs.getDouble(3), rs.getInt(4));
 			}
-		} finally {
-			rs.close();
-			pstmt.close();
 		}
 
-		throw new SQLException("There's no entry with such an ID");
 	}
 
+	/**
+	 * Returns an array of length 0 to n with products.
+	 * 
+	 * @param n
+	 * @return
+	 * @throws SQLException
+	 */
 	public Product[] readSomeLast(int n) throws SQLException {
+		ArrayList<Product> prodList = new ArrayList<Product>();
 
-		Product[] prodList = new Product[n];
+		try (
+				PreparedStatement pstmt = con
+						.prepareStatement("SELECT id, name, price, quantity FROM products ORDER BY id DESC")) {
 
-		PreparedStatement pstmt = con
-				.prepareStatement("SELECT id, name, price, quantity FROM products ORDER BY id DESC");
+			pstmt.setMaxRows(n);
 
-		pstmt.setMaxRows(n);
-
-		ResultSet rs = pstmt.executeQuery();
-
-		try {
-			for (int i = 0; i < n; i++) {
-				if (rs != null && rs.next()) {
-					prodList[i] = new model.Product(rs.getLong(1), rs.getString(2),
-							rs.getDouble(3), rs.getInt(4));
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					prodList.add(new model.Product(rs.getLong(1), rs.getString(2), rs.getDouble(3),
+							rs.getInt(4)));
 				}
 			}
-		} finally {
-			rs.close();
-			pstmt.close();
-		}
 
-		return prodList;
+			return prodList.toArray(new Product[0]);
+		}
+	}
+
+	/**
+	 * Returns an array with all products.
+	 * 
+	 * @param n
+	 * @return
+	 * @throws SQLException
+	 */
+	public Product[] readSome() throws SQLException {
+		ArrayList<Product> prodList = new ArrayList<>();
+
+		try (
+				PreparedStatement pstmt = con
+						.prepareStatement("SELECT id, name, price, quantity FROM products ORDER BY id DESC")) {
+
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					prodList.add(new model.Product(rs.getLong(1), rs.getString(2), rs.getDouble(3),
+							rs.getInt(4)));
+				}
+			}
+
+			return (Product[]) prodList.toArray();
+		}
 	}
 
 	public void writeSome(Product[] products) throws SQLException {
@@ -103,42 +117,19 @@ public class JDBCConnector {
 	}
 
 	public void dumpMetaData() throws SQLException {
-
 		DatabaseMetaData dmd = con.getMetaData();
 		System.out.println("URL: " + dmd.getURL());
 		System.out.println("Username: " + dmd.getUserName());
 		System.out.println("Tables: ");
-		ResultSet rs = dmd.getTables(null, null, null, null);
-		while (rs.next()) {
-			System.out.println(rs.getString("TABLE_NAME"));
-		}
-
-		rs.close();
-	}
-
-	public void close() {
-		if (con != null) {
-			try {
-				con.close();
-			} catch (SQLException e) {
-				// Should only rarely occur and DB will close connection itself
-				// after appropriate amount of time.
+		try (ResultSet rs = dmd.getTables(null, null, null, null)) {
+			while (rs.next()) {
+				System.out.println(rs.getString("TABLE_NAME"));
 			}
 		}
 	}
 
-	public JDBCConnector() {
-		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
-			System.out.println("Treiber wurde nicht gefunden.");
-		}
-
-		try {
-			con = DriverManager.getConnection("jdbc:postgresql://java.is.uni-due.de/ws1011",
-					"ws1011", "ftpw10");
-		} catch (SQLException e) {
-			System.out.println("Verbindung zu Datenbank konnte nicht hergestellt werden.");
-		}
+	@Override
+	public void close() throws SQLException {
+		con.close();
 	}
 }
