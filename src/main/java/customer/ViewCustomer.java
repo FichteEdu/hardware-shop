@@ -52,7 +52,7 @@ public class ViewCustomer extends JFrame implements Observer {
 		right.add(new JScrollPane(table));
 		right.add(new JButton("Buy"));
 		add(right);
-		
+
 		// set test data for jlist
 
 		Order order = new model.Order();
@@ -70,6 +70,5 @@ public class ViewCustomer extends JFrame implements Observer {
 	public void update(Observable o, Object arg) {
 		tableModel.fireTableDataChanged();
 	}
-
 
 }
