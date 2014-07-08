@@ -1,36 +1,31 @@
 import shop.ControllerShop;
 import shop.ModelShop;
 import shop.ViewShop;
-// import customer.ModelCustomer;
+import customer.ControllerCustomer;
+import customer.ModelCustomer;
 import customer.ViewCustomer;
 
 
 public class Main {
 
 	public static void main(String[] args) {
-		ModelShop m = new ModelShop();
-		ViewShop v = new ViewShop();
-		ControllerShop c = new ControllerShop();
-		c.link(m, v);
+		ModelShop ms = new ModelShop();
+		ViewShop vs = new ViewShop();
+		ControllerShop cs = new ControllerShop();
+		cs.link(ms, vs);
 
-		v.setVisible(true);
+		vs.setVisible(true);
 
-		// Not needed for u3u4
-		// customer(m);
+		customer(ms);
 	}
 
-	@SuppressWarnings("unused")
-	private static void customer(ModelShop m) {
+	private static void customer(ModelShop ms) {
 
-		// TODO: there is no ControllerCustomer yet, so do it quick and dirty
-		// The view should not know about its model at creation time, but this
-		// will be taken care of at a later point in time.
-		//
-		// ModelCustomer mc = new ModelCustomer();
+		ModelCustomer mc = new ModelCustomer();
 		ViewCustomer vc = new ViewCustomer();
+		ControllerCustomer cc = new ControllerCustomer();
 		// link manually
-		vc.setModel(m);
-		m.addObserver(vc);
+		cc.link(ms, mc, vc);
 
 		vc.setVisible(true);
 	}

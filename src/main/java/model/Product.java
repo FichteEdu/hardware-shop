@@ -5,15 +5,14 @@ import javax.persistence.*;
 
 @Entity()
 @Table(name = "products")
-public class Product implements fpt.com.Product {
+public class Product implements fpt.com.Product{
 
-	private static final long			serialVersionUID	= 1001L;
+	private static final long	serialVersionUID	= 1001L;
 
-
-	private long						id;
-	private String						name;
-	private double						price;
-	private int							quantity;
+	private long				id;
+	private String				name;
+	private double				price;
+	private int					quantity;
 
 	// We need this for Beans & OpenJPA serialization
 	public Product() {
@@ -73,8 +72,12 @@ public class Product implements fpt.com.Product {
 
 	@Override
 	public void setQuantity(int quantity) {
-		//this.quantity = Math.abs(quantity); // OpenJPA doesn't like that
+		// this.quantity = Math.abs(quantity); // OpenJPA doesn't like that
 		this.quantity = quantity;
+	}
+	
+	public static Product clone(fpt.com.Product p) {
+		return new Product(p.getId(), p.getName(), p.getPrice(), p.getQuantity());
 	}
 
 }

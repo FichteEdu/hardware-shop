@@ -1,57 +1,25 @@
 package customer;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Observable;
 
-import fpt.com.Product;
+import model.Order;
 
 
-// TODO this will have to be changed
-public class ModelCustomer extends Observable implements fpt.com.ProductList {
+public class ModelCustomer extends Observable {
 
-	private static final long	serialVersionUID	= 6001L;
-	private fpt.com.ProductList	cartlist			= new model.ProductList();
+	private ArrayList<Order>	orders	= new ArrayList<>();
 
-	@Override
-	public Iterator<Product> iterator() {
-		return cartlist.iterator();
+	public ArrayList<Order> getOrders() {
+		return orders;
 	}
 
-	@Override
-	public boolean add(Product p) {
-		boolean ret = cartlist.add(p);
-		changed();
-		return ret;
+	public void newOrders() {
+		orders = new ArrayList<Order>();
 	}
 
-	@Override
-	public boolean delete(Product p) {
-		boolean ret = cartlist.delete(p);
-		changed();
-		return ret;
-	}
-
-	@Override
-	public int size() {
-		return cartlist.size();
-	}
-
-	@Override
-	public Product findProductById(long id) {
-		return cartlist.findProductById(id);
-	}
-
-	@Override
-	public Product findProductByName(String name) {
-		return cartlist.findProductByName(name);
-	}
-
-	/**
-	 * Signal that we changed something and notify our observers.
-	 */
-	private void changed() {
+	public void changed() {
 		setChanged();
 		notifyObservers();
 	}
-
 }

@@ -15,8 +15,11 @@ public class ProductListTableModel extends AbstractTableModel {
 	private ProductList			plist;
 	private Order				order;
 
-	private static Object[][]	columns	= { { "Name", String.class }, { "Price", Double.class },
-			{ "Quantity", Integer.class }, { "OrderCount", Integer.class } };
+	QuantityListener			quantityListener	= null;
+
+	private static Object[][]	columns				= { { "Name", String.class },
+			{ "Price", Double.class }, { "Available", Integer.class },
+			{ "OrderCount", Integer.class }		};
 
 	public ProductListTableModel() {
 	}
@@ -83,10 +86,11 @@ public class ProductListTableModel extends AbstractTableModel {
 				return p.getPrice();
 			case 2:
 				// Available products
-				Product pp = plist.findProductById(p.getId());
-				return pp.getQuantity();
-			case 3:
 				return p.getQuantity();
+			case 3:
+				// Ordercount, if any
+				Product op = order != null ? order.findProductById(p.getId()) : null;
+				return op != null ? op.getQuantity() : 0;
 			default:
 				System.out.println("Invalid column number");
 		}
@@ -95,12 +99,7 @@ public class ProductListTableModel extends AbstractTableModel {
 
 	@Override
 	public boolean isCellEditable(int row, int col) {
-		switch (col) {
-			case 3:
-				return true;
-			default:
-				return false;
-		}
+		return col == 3;
 	}
 
 	/**
@@ -109,7 +108,7 @@ public class ProductListTableModel extends AbstractTableModel {
 	 * @param i
 	 * @return The Product at that position or null.
 	 */
-	Product getProduct(int i) {
+	public Product getProduct(int i) {
 		Iterator<Product> it = plist.iterator();
 
 		// Get the product at position X
@@ -118,6 +117,23 @@ public class ProductListTableModel extends AbstractTableModel {
 				return it.next();
 
 		return null;
+	}
+
+	@Override
+	public void setValueAt(Object aValue, int row, int column) {
+		// Cell has been edited (we only allow this for the quantity)
+		int quantity;
+		try {
+			quantity = Integer.valueOf(aValue.toString());
+		} catch (NumberFormatException ex) {
+			return;
+		}
+		if (quantityListener != null)
+			quantityListener.quantityChanged(new QuantityEvent(this, getProduct(row), quantity));
+	}
+
+	public void addQuantityListener(QuantityListener listener) {
+		quantityListener = listener;
 	}
 
 }
