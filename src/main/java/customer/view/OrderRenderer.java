@@ -27,17 +27,12 @@ public class OrderRenderer implements ListCellRenderer<Order> {
 
 		// also nichts besonderes
 		Box box = Box.createVerticalBox();
-		JLabel label = null;
-		if (order.getQuantity() == 1) {
-			label = new JLabel("Order with " + order.getQuantity() + " Item for "
-					+ String.format("%5.2f", order.getSum()));
-		} else {
-			label = new JLabel("Order with " + order.getQuantity() + " Items for "
-					+ String.format("%5.2f", order.getSum()));
-		}
+		JLabel label = new JLabel(String.format("Order with %d Item%s for %5.2f€",
+				order.getQuantity(), (order.getQuantity() == 1 ? "" : "s"), order.getSum()));
 		box.add(label);
 		StringBuilder bb = new StringBuilder();
 		Font font = label.getFont().deriveFont(Font.ITALIC, label.getFont().getSize() * 0.9f);
+		// TODO: show in multiple lines
 		for (Product p : order) {
 			int l = bb.length();
 			if (l > 0) {
@@ -53,7 +48,7 @@ public class OrderRenderer implements ListCellRenderer<Order> {
 			bb.append(p.getQuantity()).append(" x ");
 			bb.append(p.getName());
 			bb.append(" (");
-			bb.append(String.format("%5.2f", p.getQuantity() * p.getPrice()));
+			bb.append(String.format("%5.2f€", p.getQuantity() * p.getPrice()));
 			bb.append(" )");
 		}
 		if (bb.length() > 0) {
