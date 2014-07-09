@@ -54,8 +54,11 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 		Product p = e.getProduct();
 		Product op = currentOrder.findProductById(p.getId());
 
-		// Remove product from order if below 0
-		if (e.getNewQuantity() < 0) {
+		// Limit to maximum available
+		int quantity = Math.min(e.getNewQuantity(), p.getQuantity());
+
+		// Remove product from order if below 1 (and in the order)
+		if (quantity < 1) {
 			if (op != null)
 				currentOrder.remove(op);
 			return;
@@ -65,8 +68,7 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 			op = model.Product.clone(p);
 			currentOrder.add(op);
 		}
-		// Limit to maximum available
-		op.setQuantity(Math.min(e.getNewQuantity(), p.getQuantity()));
+		op.setQuantity(quantity);
 		m.changed();
 	}
 
