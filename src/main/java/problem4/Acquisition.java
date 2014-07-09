@@ -22,19 +22,33 @@ public class Acquisition extends Thread {
 			Customer customer = new Customer("C" + i++);
 			out("Found new customer: %s", customer);
 
-			// Find open cashpoint with fewest customers
+			// Find open cashpoint with fewest customers (this is inaccurate)
 			Cashpoint minCashpoint = null;
-			for (Cashpoint c : cs) {
-				int l = c.length();
-				// See if we can append
-				if (c.canAdd() && (minCashpoint == null || l < minCashpoint.length()))
-					minCashpoint = c;
+			int l = 0;
+			while (true) {
+				for (Cashpoint c : cs) {
+					int minl = c.length();
+					// See if we can append
+					if (c.canAdd() && (minCashpoint == null || minl < minCashpoint.length()))
+						minCashpoint = c;
+				}
+				if (minCashpoint == null)
+					break;
+
+				// Make sure the cashpoint doesn't close on us, otherwise
+				// we'd get an exception (or lose our customer if we just
+				// caught it)
+				synchronized (minCashpoint) {
+					if (minCashpoint.canAdd()) {
+						minCashpoint.add(customer);
+						l = minCashpoint.length();
+						break;
+					}
+				}
 			}
 
 			// Add to cashpoint's queue
 			if (minCashpoint != null) {
-				minCashpoint.add(customer);
-				int l = minCashpoint.length();
 
 				// Open new cashpoint if threshold exceeded
 				if (l >= newCashThreshold)

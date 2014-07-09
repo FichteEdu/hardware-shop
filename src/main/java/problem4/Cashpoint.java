@@ -18,6 +18,8 @@ public class Cashpoint extends Thread {
 
 	public Cashpoint(	String name, Balance balance) {
 		super(name);
+		// We don't really need to use a blocking queue here, but it's an
+		// implementation that works
 		this.q = new LinkedBlockingQueue<>();
 		this.balance = balance;
 	}
@@ -25,6 +27,7 @@ public class Cashpoint extends Thread {
 	@Override
 	public void run() {
 		try {
+			// Idling~
 			while (true) {
 				// Prepare to open
 				if (opening) {
@@ -45,23 +48,29 @@ public class Cashpoint extends Thread {
 					continue;
 				}
 
-				synchronized (q) {
-					while (q.size() != 0) {
-						// Process a customer
-						Customer c = q.poll();
-						out("Start processing customer %s; %d still in queue", c, length());
-
-						// Wait between 6 and 10 seconds
-						Thread.sleep((long) (6000 + 1000 * 4 * Math.random()));
-
-						// Add a random amount between 0 and 50 (with two
-						// decimal digits) to the balance
-						balance.increase(this, (rand.nextInt(5000) + 1) / 100d);
-
+				// Start processing customers
+				Customer c;
+				while (true) {
+					// Make sure that we close the cashpoint before more
+					// customers can be added
+					synchronized (this) {
+						if (q.size() == 0) {
+							out("Queue is empty! Closing...");
+							open = false;
+							break;
+						}
+						c = q.poll();
 					}
 
-					out("Queue is empty! Closing...");
-					open = false;
+					// Process a customer
+					out("Start processing customer %s; %d still in queue", c, length());
+
+					// Wait between 6 and 10 seconds
+					Thread.sleep((long) (6000 + 1000 * 4 * Math.random()));
+
+					// Add a random amount between 0 and 50 (with two
+					// decimal digits) to the balance
+					balance.increase(this, (rand.nextInt(5000) + 1) / 100d);
 				}
 			}
 		} catch (InterruptedException e) {
@@ -72,7 +81,6 @@ public class Cashpoint extends Thread {
 	/**
 	 * Open the cashpoint.
 	 */
-	// synchronized to only allow opening once at a time
 	public synchronized void open() {
 		if (!isClosed())
 			return;
@@ -80,7 +88,7 @@ public class Cashpoint extends Thread {
 		opening = true;
 	}
 
-	public boolean isOpen() {
+	public synchronized boolean isOpen() {
 		return open;
 	}
 
@@ -89,7 +97,7 @@ public class Cashpoint extends Thread {
 	 * 
 	 * @param c
 	 */
-	public void add(Customer c) {
+	public synchronized void add(Customer c) {
 		if (!canAdd())
 			throw new RuntimeException("Cashpoint is closed");
 		q.add(c);
@@ -100,21 +108,21 @@ public class Cashpoint extends Thread {
 	 * Whether the cashpoint is closed (note that this is different from
 	 * !isOpen()).
 	 */
-	public boolean isClosed() {
+	public synchronized boolean isClosed() {
 		return !(isOpen() || opening);
 	}
 
 	/**
 	 * Whether customerscan be added to the queue.
 	 */
-	public boolean canAdd() {
+	public synchronized boolean canAdd() {
 		return !isClosed();
 	}
 
 	/**
 	 * Get the lenght of the queue this cashpoint processes.
 	 */
-	public int length() {
+	public synchronized int length() {
 		return q.size();
 	}
 

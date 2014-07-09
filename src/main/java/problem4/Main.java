@@ -24,15 +24,16 @@ public class Main {
 		// Now we wait for all cashpoints to close
 		boolean someOpen;
 		do {
+			Thread.sleep(100);
+
 			someOpen = false;
 			for (Cashpoint c : cs) {
 				someOpen |= !c.isClosed();
 			}
-
-			Thread.sleep(100);
 		} while (someOpen);
 
 		System.out.println("All cashpoints are closed. Exiting...");
+		// With the default values there should be no casualties, but check anyway
 
 		// Stop threads
 		// Thread.stop() is deprecated but suits our needs just perfectly here
@@ -40,8 +41,14 @@ public class Main {
 			System.out.println("WARNING! Cashpoints are closed despite Acquisition still running");
 			aqThread.stop();
 		}
-		for (Thread c : cs) {
-			c.stop();
+		for (Cashpoint c : cs) {
+			// In any case, let cashpoints finish their stuff
+			synchronized (c) {
+				while (!c.isClosed()) {
+					Thread.sleep(100);
+				}
+				c.stop();
+			}
 		}
 
 	}
