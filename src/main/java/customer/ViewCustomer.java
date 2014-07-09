@@ -1,5 +1,6 @@
 package customer;
 
+import java.awt.Dimension;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -65,6 +66,7 @@ public class ViewCustomer extends JFrame {
 		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
 
 		orderJList = new JList<Order>();
+		orderJList.setPreferredSize(new Dimension(200, 0));
 		orderRenderer = new OrderRenderer();
 		orderJList.setCellRenderer(orderRenderer);
 		add(new JScrollPane(orderJList));

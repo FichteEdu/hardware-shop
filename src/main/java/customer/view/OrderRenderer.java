@@ -1,5 +1,6 @@
 package customer.view;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 
@@ -12,53 +13,38 @@ import fpt.com.Order;
 import fpt.com.Product;
 
 
+// Mainly from received Example
 public class OrderRenderer implements ListCellRenderer<Order> {
+	
+	private static final Font  SECONDARY_FONT;
+	private static final Color ACTIVE_COLOR = Color.BLUE;
 
-	// Mainly from received Example
-
-	// verwendbar mit JList<Product>.setCellRenderer(new OrderRenderer());
-	// methode
+	static {
+		Font baseFont = new JLabel().getFont();
+		SECONDARY_FONT = baseFont.deriveFont(Font.ITALIC, baseFont.getSize() * 0.9f);
+	}
 
 	@Override
 	public Component getListCellRendererComponent(JList<? extends Order> list, Order order,
 			int index, boolean isSelected, boolean cellHasFocus) {
 
-		// nur anzeigen
-
-		// also nichts besonderes
-		Box box = Box.createVerticalBox();
+		Box vbox = Box.createVerticalBox();
 		JLabel label = new JLabel(String.format("Order with %d Item%s for %5.2f€",
 				order.getQuantity(), (order.getQuantity() == 1 ? "" : "s"), order.getSum()));
-		box.add(label);
-		StringBuilder bb = new StringBuilder();
-		Font font = label.getFont().deriveFont(Font.ITALIC, label.getFont().getSize() * 0.9f);
-		// TODO: show in multiple lines
+		vbox.add(label);
+		if (index == 0)
+			label.setForeground(ACTIVE_COLOR);
+
+		// Add label for each product
 		for (Product p : order) {
-			int l = bb.length();
-			if (l > 0) {
-				if (l > 100) {
-					JLabel ll = new JLabel(bb.toString());
-					bb = new StringBuilder();
-					ll.setFont(font);
-					box.add(ll);
-				} else {
-					bb.append(", ");
-				}
-			}
-			bb.append(p.getQuantity()).append(" x ");
-			bb.append(p.getName());
-			bb.append(" (");
-			bb.append(String.format("%5.2f€", p.getQuantity() * p.getPrice()));
-			bb.append(" )");
-		}
-		if (bb.length() > 0) {
-			JLabel ll = new JLabel(bb.toString());
-			bb = new StringBuilder();
-			ll.setFont(font);
-			box.add(ll);
+			String text = String.format("%dx %s (%5.2f€)", p.getQuantity(), p.getName(),
+					p.getQuantity() * p.getPrice());
+			JLabel ll = new JLabel(text);
+			ll.setFont(SECONDARY_FONT);
+			vbox.add(ll);
 		}
 
-		return box;
+		return vbox;
 	}
 
 }
