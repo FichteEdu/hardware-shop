@@ -2,12 +2,16 @@ package customer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import javax.swing.JOptionPane;
 
 import shop.ModelShop;
 import customer.view.QuantityEvent;
@@ -58,12 +62,23 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO auth
-		// By saving changing the order references prior to sending it we can
-		// make sure that no data is missing.
+		// Ask for credentials
+		String user = JOptionPane.showInputDialog("Enter username:");
+		if (user.isEmpty())
+			return;
+
+		String pass = JOptionPane.showInputDialog("Enter password:");
+		if (pass.isEmpty())
+			return;
+
 		Order order = currentOrder;
+		// By changing the references prior to sending it we can
+		// make sure that no data is missing.
 		newOrder();
-		sendOrderThread.send(order);
+		Object[] data = { user, pass, order };
+		// Credentials are checked on the server. If they are wrong the order is
+		// lost, but who cares (I currently do not).
+		sendOrderThread.send(data);
 	}
 
 	@Override
@@ -94,7 +109,7 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 
 	private void newOrder() {
 		ArrayList<Order> orders = m.getOrders();
-		
+
 		currentOrder = new model.Order();
 		v.setCurrentOrder(currentOrder);
 		if (orders.size() > 0)
@@ -112,37 +127,50 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 			ObjectInputStream oin = new ObjectInputStream(socket.getInputStream());) {
 				while (!socket.isClosed()) {
 					Object input = oin.readObject();
-					// Assure we have an order here
-					if (!(input instanceof Order)) {
-						System.out.println("WARNING: Received object that is NOT an Order!");
-						return;
-					}
 
 					// Process our input
-					Order order = (Order) input;
-					m.getOrders().add(1, order);
-					m.changed();
+					if (input instanceof Order) {
+						Order order = (Order) input;
+						m.getOrders().add(1, order);
+						m.changed();
+					} else if (input instanceof String) {
+						String msg = (String) input;
+						JOptionPane.showMessageDialog(null, msg + "\n\nYour order has been lost.",
+								"Error submitting order",
+								JOptionPane.ERROR_MESSAGE);
+					} else {
+						System.out.println("WARNING: Received unknown Object!");
+						return;
+					}
 				}
+			} catch (SocketException e) {
+				if (e.getMessage().equals("Connection reset")) {
+					System.out.println("Connection to Warehouse closed.");
+					System.exit(2);
+				}
+			} catch (EOFException e) {
+				System.out.println("Connection to Warehouse closed.");
+				System.exit(3);
 			} catch (IOException
 					| ClassNotFoundException e) {
 				e.printStackTrace();
-				System.exit(2);
+				System.exit(3);
 			}
 		}
 	}
 
 	class SendOrderThread extends Thread {
 
-		LinkedBlockingQueue<Order>	queue	= new LinkedBlockingQueue<>();
+		LinkedBlockingQueue<Object[]>	queue	= new LinkedBlockingQueue<>();
 
 		@Override
 		public void run() {
 			try (ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());) {
 
-				Order order = null;
+				Object[] data = null;
 				while (!socket.isClosed()) {
-					if (null != (order = queue.poll())) {
-						oout.writeObject(order);
+					if (null != (data = queue.poll())) {
+						oout.writeObject(data);
 						oout.flush();
 					} else {
 						// Wait for orders to write
@@ -165,8 +193,8 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 			}
 		}
 
-		public void send(Order order) {
-			queue.add(order);
+		public void send(Object[] data) {
+			queue.add(data);
 		}
 	}
 }

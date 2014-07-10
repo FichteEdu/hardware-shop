@@ -38,6 +38,9 @@ public class Warehouse {
 
 class ReceiveOrderThread extends Thread {
 
+	private static final String	USER	= "admin";
+	private static final String	PASS	= "admin";
+
 	private Socket				socket;
 	private ArrayList<Order>	orders;
 	private SendOrderThread		sendOrderThread;
@@ -51,25 +54,39 @@ class ReceiveOrderThread extends Thread {
 
 	@Override
 	public void run() {
-		try (@SuppressWarnings("resource")
-		ObjectInputStream oin = new ObjectInputStream(socket.getInputStream());) {
+		try (ObjectInputStream oin = new ObjectInputStream(socket.getInputStream());) {
 
 			while (!socket.isClosed()) {
 				Object input = oin.readObject();
-				// Assure we have an order here
-				if (!(input instanceof Order)) {
-					System.out.println("WARNING: Received object that is NOT an Order!");
-					return;
+				// Assure we have an array here
+				if (!(input instanceof Object[])) {
+					out("WARNING: Received object that is NOT an Array!");
+					continue;
+				}
+				// With the correct types (signature)
+				Object[] array = (Object[]) input;
+				if (array.length != 3
+						|| !(array[0] instanceof String && array[1] instanceof String && array[2] instanceof Order)) {
+					out("WARNING: Received invalid array signature!");
+					continue;
+				}
+
+				// Check credentials
+				String user = (String) array[0], pass = (String) array[1];
+				if (!(user.equals(USER) && pass.equals(PASS))) {
+					out("Invalid credentials submitted");
+					sendOrderThread.send("Invalid credentials");
+					continue;
 				}
 
 				// Process our input
-				Order order = (Order) input;
+				Order order = (Order) array[2];
 				orders.add(order);
 				// Send back to client
 				sendOrderThread.send(order);
 
 				// Some console output
-				System.out.format("Received new order (%s):%n", socket.getInetAddress());
+				out("Received new order: ");
 				printOrder(order);
 				System.out.format("---%n");
 				printOrders();
@@ -77,7 +94,7 @@ class ReceiveOrderThread extends Thread {
 			}
 		} catch (SocketException e0) {
 			if (e0.getMessage().equals("Connection reset"))
-			System.out.format("Connection closed (%s).%n", socket.getInetAddress());
+				out("Connection closed.");
 		} catch (IOException
 				| ClassNotFoundException e1) {
 			e1.printStackTrace();
@@ -93,7 +110,7 @@ class ReceiveOrderThread extends Thread {
 	void printOrders() {
 		int count = 0;
 		double sum = 0;
-		for (Order order : orders){
+		for (Order order : orders) {
 			count += order.getQuantity();
 			sum += order.getSum();
 		}
@@ -107,16 +124,18 @@ class ReceiveOrderThread extends Thread {
 			System.out.format("%-30s%8d%10.2f EUR%n", p.getName(), p.getQuantity(), p.getQuantity()
 					* p.getPrice());
 		System.out.println(StringUtils.repeat("=", width));
-		System.out.format("Count: %d, Sum: %.2f EUR%n", order.getQuantity(),
-				order.getSum());
+		System.out.format("Count: %d, Sum: %.2f EUR%n", order.getQuantity(), order.getSum());
 	}
 
+	private void out(String msg, Object... args) {
+		System.out.format("%s (%s)%n", String.format(msg, args), socket.getInetAddress());
+	}
 }
 
 
 class SendOrderThread extends Thread {
 
-	LinkedBlockingQueue<Order>	queue	= new LinkedBlockingQueue<>();
+	LinkedBlockingQueue<Object>	queue	= new LinkedBlockingQueue<>();
 	private Socket				socket;
 
 	public SendOrderThread(	Socket socket) {
@@ -127,10 +146,10 @@ class SendOrderThread extends Thread {
 	public void run() {
 		try (ObjectOutputStream oout = new ObjectOutputStream(socket.getOutputStream());) {
 
-			Order order = null;
+			Object data = null;
 			while (!socket.isClosed()) {
-				if (null != (order = queue.poll())) {
-					oout.writeObject(order);
+				if (null != (data = queue.poll())) {
+					oout.writeObject(data);
 					oout.flush();
 				} else {
 					// Wait for orders to write
@@ -153,7 +172,7 @@ class SendOrderThread extends Thread {
 		}
 	}
 
-	public void send(Order order) {
-		queue.add(order);
+	public void send(Object data) {
+		queue.add(data);
 	}
 }
