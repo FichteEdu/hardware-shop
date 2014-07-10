@@ -17,7 +17,7 @@ import fpt.com.SerializableStrategy;
 
 public class ControllerShop implements ActionListener {
 
-	private static final int			LAST_N_PRODUCTS	= 10;
+	private static final int			LAST_N_PRODUCTS	= 20;
 	private static final IDGenerator	idgen			= new IDGenerator();
 
 	private ModelShop					m;
@@ -82,8 +82,8 @@ public class ControllerShop implements ActionListener {
 				case "JDBC upload":
 				case "OpenJPA Serialization 10":
 					// For simplicity, empty the current product list when
-					// switching strategy
-					m.reset();
+					// switching strategy and try to load previous data
+					load();
 					break;
 
 				case "save":
@@ -149,7 +149,6 @@ public class ControllerShop implements ActionListener {
 				}
 				break;
 		}
-
 	}
 
 	private void save() {
