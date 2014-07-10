@@ -125,8 +125,10 @@ public class ControllerCustomer implements ActionListener, QuantityListener, Tim
 		// Since this is not supported by the interface we just cast to out
 		// model version.
 		if (quantity < 1) {
-			if (op != null)
+			if (op != null) {
 				((model.Order) currentOrder).remove(op);
+				m.changed();
+			}
 			return;
 		}
 		// Add product to order if necessary
