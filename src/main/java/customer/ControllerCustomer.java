@@ -82,11 +82,11 @@ public class ControllerCustomer implements ActionListener, QuantityListener, Tim
 			case "Buy":
 				// Ask for credentials
 				String user = JOptionPane.showInputDialog("Enter username:");
-				if (user.isEmpty())
+				if (user == null || user.isEmpty())
 					return;
 
 				String pass = JOptionPane.showInputDialog("Enter password:");
-				if (pass.isEmpty())
+				if (pass == null || pass.isEmpty())
 					return;
 
 				Order order = currentOrder;
