@@ -3,7 +3,7 @@ package customer;
 import java.util.ArrayList;
 import java.util.Observable;
 
-import model.Order;
+import fpt.com.Order;
 
 
 public class ModelCustomer extends Observable {

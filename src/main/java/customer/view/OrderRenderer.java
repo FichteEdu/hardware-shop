@@ -18,11 +18,13 @@ public class OrderRenderer implements ListCellRenderer<Order> {
 	
 	private static final Font  SECONDARY_FONT;
 	private static final Color ACTIVE_COLOR = Color.BLUE;
+	private Order currentOrder;
 
 	static {
 		Font baseFont = new JLabel().getFont();
 		SECONDARY_FONT = baseFont.deriveFont(Font.ITALIC, baseFont.getSize() * 0.9f);
 	}
+	
 
 	@Override
 	public Component getListCellRendererComponent(JList<? extends Order> list, Order order,
@@ -32,7 +34,7 @@ public class OrderRenderer implements ListCellRenderer<Order> {
 		JLabel label = new JLabel(String.format("Order with %d Item%s for %5.2f€",
 				order.getQuantity(), (order.getQuantity() == 1 ? "" : "s"), order.getSum()));
 		vbox.add(label);
-		if (index == 0)
+		if (order == this.currentOrder)
 			label.setForeground(ACTIVE_COLOR);
 
 		// Add label for each product
@@ -45,6 +47,16 @@ public class OrderRenderer implements ListCellRenderer<Order> {
 		}
 
 		return vbox;
+	}
+
+
+	public Order getCurrentOrder() {
+		return currentOrder;
+	}
+
+
+	public void setCurrentOrder(Order order) {
+		this.currentOrder = order;
 	}
 
 }

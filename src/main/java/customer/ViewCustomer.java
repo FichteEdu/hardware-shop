@@ -33,7 +33,6 @@ public class ViewCustomer extends JFrame {
 	private JTable					table;
 
 	private ModelCustomer			m;
-	private Order					currentOrder	= null;
 	
 	private JButton btnBuy;
 	
@@ -49,7 +48,7 @@ public class ViewCustomer extends JFrame {
 		public void update(Observable o, Object arg) {
 			ArrayList<? extends Order> orders = m.getOrders();
 			orderJList.setListData(orders.toArray(new Order[]{}));
-			tableModel.setOrder(orders.size() > 0 ? orders.get(0) : null);
+			tableModel.setCurrentOrder(orders.size() > 0 ? orders.get(0) : null);
 			tableModel.fireTableDataChanged();
 		}
 	};
@@ -89,7 +88,6 @@ public class ViewCustomer extends JFrame {
 		m.addObserver(orderObserver);
 
 		tableModel.setPlist(ms);
-		tableModel.setOrder(currentOrder);
 	}
 
 	public void addQuantityListener(QuantityListener listener) {
@@ -109,6 +107,11 @@ public class ViewCustomer extends JFrame {
 
 	public int getEditingRow() {
 		return table.convertRowIndexToModel(table.getEditingRow());
+	}
+
+	public void setCurrentOrder(Order currentOrder) {
+		tableModel.setCurrentOrder(currentOrder);
+		orderRenderer.setCurrentOrder(currentOrder);
 	}
 
 }

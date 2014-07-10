@@ -13,7 +13,7 @@ import fpt.com.ProductList;
 public class ProductListTableModel extends AbstractTableModel {
 
 	private ProductList			plist;
-	private Order				order;
+	private Order				currentOrder;
 
 	QuantityListener			quantityListener	= null;
 
@@ -25,7 +25,7 @@ public class ProductListTableModel extends AbstractTableModel {
 	}
 
 	public ProductListTableModel(	Order order, ProductList plist) {
-		setOrder(order);
+		setCurrentOrder(order);
 		setPlist(plist);
 	}
 
@@ -47,12 +47,12 @@ public class ProductListTableModel extends AbstractTableModel {
 	 * 
 	 * @param order
 	 */
-	public void setOrder(Order order) {
-		this.order = order;
+	public void setCurrentOrder(Order order) {
+		this.currentOrder = order;
 	}
 
-	public Order getOrder() {
-		return order;
+	public Order getCurrentOrder() {
+		return currentOrder;
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class ProductListTableModel extends AbstractTableModel {
 				return p.getQuantity();
 			case 3:
 				// Ordercount, if any
-				Product op = order != null ? order.findProductById(p.getId()) : null;
+				Product op = currentOrder != null ? currentOrder.findProductById(p.getId()) : null;
 				return op != null ? op.getQuantity() : 0;
 			default:
 				System.out.println("Invalid column number");
