@@ -8,6 +8,7 @@ import java.util.Observer;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -35,6 +36,7 @@ public class ViewCustomer extends JFrame {
 	private Order					currentOrder	= null;
 	
 	private JButton btnBuy;
+	private JLabel timeLabel;
 	
 	Observer plistObserver = new Observer() {
 		@Override
@@ -63,6 +65,8 @@ public class ViewCustomer extends JFrame {
 
 		JPanel right = new JPanel();
 		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
+		
+		JPanel bottomright = new JPanel();
 
 		orderJList = new JList<Order>();
 		orderRenderer = new OrderRenderer();
@@ -77,7 +81,10 @@ public class ViewCustomer extends JFrame {
 		table.setModel(tableModel);
 		right.add(new JScrollPane(table));
 		btnBuy = new JButton("Buy");
-		right.add(btnBuy);
+		timeLabel = new JLabel();
+		bottomright.add(btnBuy);
+		bottomright.add(timeLabel);
+		right.add(bottomright);
 		add(right);
 	}
 
@@ -107,6 +114,10 @@ public class ViewCustomer extends JFrame {
 
 	public int getEditingRow() {
 		return table.convertRowIndexToModel(table.getEditingRow());
+	}
+	
+	public void setTime(String time) {
+		timeLabel.setText(time);
 	}
 
 }

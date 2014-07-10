@@ -3,6 +3,8 @@ package customer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.SwingUtilities;
+
 import model.Order;
 import shop.ModelShop;
 import customer.view.QuantityEvent;
@@ -18,6 +20,7 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 	private Order			currentOrder;
 
 	public ControllerCustomer() {
+		new ClientRequestThread(this).start();
 	}
 
 	private void newOrder() {
@@ -69,5 +72,14 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 		op.setQuantity(Math.min(e.getNewQuantity(), p.getQuantity()));
 		m.changed();
 	}
+	
+	public void setTime(final String time) {
+		  SwingUtilities.invokeLater(new Runnable() {
+		    @Override
+			public void run() {
+		      v.setTime(time);
+		    }
+		  });
+		}
 
 }
