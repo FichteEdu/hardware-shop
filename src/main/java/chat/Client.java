@@ -18,12 +18,18 @@ import javax.swing.JTextField;
 
 
 public class Client {
+	
 
 	public static void main(String[] args) throws RemoteException, MalformedURLException, NotBoundException {
+		open();
+	}
+
+	public static void open() throws RemoteException, MalformedURLException, NotBoundException {
 		
 		JFrame jf = new JFrame();
 		jf.setLayout(new BoxLayout(jf.getContentPane(), BoxLayout.Y_AXIS)); 
 		jf.setTitle("SupportChat");
+		// This closes our main application as well, but whatever
 		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jf.setSize(450, 300);
 		

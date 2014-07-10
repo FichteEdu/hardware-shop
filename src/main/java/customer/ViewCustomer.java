@@ -1,6 +1,9 @@
 package customer;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -33,8 +36,6 @@ public class ViewCustomer extends JFrame {
 	private JTable					table;
 
 	private ModelCustomer			m;
-	
-	private JButton btnBuy;
 	
 	Observer plistObserver = new Observer() {
 		@Override
@@ -77,8 +78,12 @@ public class ViewCustomer extends JFrame {
 		tableModel = new ProductListTableModel();
 		table.setModel(tableModel);
 		right.add(new JScrollPane(table));
-		btnBuy = new JButton("Buy");
-		right.add(btnBuy);
+
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new FlowLayout(FlowLayout.CENTER));
+		buttons.add(new JButton("Buy"));
+		buttons.add(new JButton("Support Chat"));
+		right.add(buttons);
 		add(right);
 	}
 
@@ -92,10 +97,6 @@ public class ViewCustomer extends JFrame {
 
 	public void addQuantityListener(QuantityListener listener) {
 		tableModel.addQuantityListener(listener);
-	}
-
-	public void addActionListener(ActionListener listener) {
-		btnBuy.addActionListener(listener);
 	}
 
 	/**
@@ -112,6 +113,38 @@ public class ViewCustomer extends JFrame {
 	public void setCurrentOrder(Order currentOrder) {
 		tableModel.setCurrentOrder(currentOrder);
 		orderRenderer.setCurrentOrder(currentOrder);
+	}
+	
+
+	/**
+	 * Recursively iterate through all containers and add `action` as action
+	 * listener to all buttons.
+	 * 
+	 * @param action
+	 *            The listener to add
+	 */
+	public void addActionListener(ActionListener al) {
+		addActionListener(this, al);
+	}
+
+	/**
+	 * Recursively iterate through all containers and add `action` as action
+	 * listener to all buttons.
+	 * 
+	 * @param c
+	 *            Container to iterate through
+	 * @param al
+	 *            The listener to add
+	 */
+	private void addActionListener(Container c, ActionListener al) {
+		for (Component child : c.getComponents()) {
+			if (child instanceof Container) {
+				addActionListener((Container) child, al);
+			}
+			if (child instanceof JButton) {
+				((JButton) child).addActionListener(al);
+			}
+		}
 	}
 
 }

@@ -6,13 +6,18 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
+import chat.Client;
 import shop.ModelShop;
 import customer.view.QuantityEvent;
 import customer.view.QuantityListener;
@@ -62,23 +67,40 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// Ask for credentials
-		String user = JOptionPane.showInputDialog("Enter username:");
-		if (user.isEmpty())
-			return;
+		JButton btn = (JButton) e.getSource();
 
-		String pass = JOptionPane.showInputDialog("Enter password:");
-		if (pass.isEmpty())
-			return;
+		switch (btn.getText()) {
+			case "Buy":
+				// Ask for credentials
+				String user = JOptionPane.showInputDialog("Enter username:");
+				if (user.isEmpty())
+					return;
 
-		Order order = currentOrder;
-		// By changing the references prior to sending it we can
-		// make sure that no data is missing.
-		newOrder();
-		Object[] data = { user, pass, order };
-		// Credentials are checked on the server. If they are wrong the order is
-		// lost, but who cares (I currently do not).
-		sendOrderThread.send(data);
+				String pass = JOptionPane.showInputDialog("Enter password:");
+				if (pass.isEmpty())
+					return;
+
+				Order order = currentOrder;
+				// By changing the references prior to sending it we can
+				// make sure that no data is missing.
+				newOrder();
+				Object[] data = { user, pass, order };
+				// Credentials are checked on the server. If they are wrong the
+				// order is lost, but who cares (I currently do not).
+				sendOrderThread.send(data);
+				break;
+			case "Support Chat":
+				try {
+					Client.open();
+				} catch (RemoteException
+						| MalformedURLException
+						| NotBoundException ex) {
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Error opening chat", null,
+							JOptionPane.ERROR_MESSAGE);
+				}
+				break;
+		}
 	}
 
 	@Override
@@ -136,8 +158,7 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 					} else if (input instanceof String) {
 						String msg = (String) input;
 						JOptionPane.showMessageDialog(null, msg + "\n\nYour order has been lost.",
-								"Error submitting order",
-								JOptionPane.ERROR_MESSAGE);
+								"Error submitting order", JOptionPane.ERROR_MESSAGE);
 					} else {
 						System.out.println("WARNING: Received unknown Object!");
 						return;
