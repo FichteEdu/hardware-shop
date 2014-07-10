@@ -34,17 +34,12 @@ public class ChatServer extends UnicastRemoteObject implements ChatService {
 
 	@Override
 	public void send(String s) {
+		System.out.println("msg: " + s);
 		for(String ts : this.getUserList()) {
 			try {
 				ClientService cl = (ClientService) Naming.lookup(ts);
 				cl.send(s);
-			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NotBoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (RemoteException e) {
+			} catch (MalformedURLException | NotBoundException | RemoteException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

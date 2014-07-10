@@ -24,7 +24,6 @@ public class ChatClient extends UnicastRemoteObject implements ClientService {
 
 	@Override
 	public void send(String s) {
-		System.out.println("msg: " + s);
 		textArea.setText(textArea.getText() + s + "\n");
 	}
 
