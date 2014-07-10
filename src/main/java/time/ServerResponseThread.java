@@ -4,24 +4,22 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
 public class ServerResponseThread extends Thread {
-	
-	private DatagramPacket packet;
-	private DatagramSocket socket;
-	private byte[] date;
-	
+
+	private DatagramPacket	packet;
+	private DatagramSocket	socket;
+	private byte[]			date;
+
 	@Override
 	public void run() {
 
-		System.out.println("Time request from " + packet.getAddress() +":"+packet.getPort());		
-		
 		try {
-			date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date(), new StringBuffer(""), new FieldPosition(0)).toString().getBytes("UTF-8");
+			date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date()).toString()
+					.getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
@@ -34,7 +32,7 @@ public class ServerResponseThread extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public ServerResponseThread(DatagramPacket packet, DatagramSocket socket) {
 		this.packet = packet;
 		this.socket = socket;

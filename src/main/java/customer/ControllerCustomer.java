@@ -2,25 +2,32 @@ package customer;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.SocketException;
 
 import javax.swing.SwingUtilities;
 
 import model.Order;
 import shop.ModelShop;
+import time.TimeRequestThread;
+import time.TimeRequester;
 import customer.view.QuantityEvent;
 import customer.view.QuantityListener;
 import fpt.com.Product;
 
 
-public class ControllerCustomer implements ActionListener, QuantityListener {
+public class ControllerCustomer implements ActionListener, QuantityListener, TimeRequester {
 
-	@SuppressWarnings("unused")
 	private ViewCustomer	v;
 	private ModelCustomer	m;
 	private Order			currentOrder;
 
 	public ControllerCustomer() {
-		new ClientRequestThread(this).start();
+		try {
+			new TimeRequestThread(this).start();
+		} catch (SocketException e) {
+			e.printStackTrace();
+			System.out.println("Unable to start time request thread");
+		}
 	}
 
 	private void newOrder() {
@@ -72,14 +79,18 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 		op.setQuantity(Math.min(e.getNewQuantity(), p.getQuantity()));
 		m.changed();
 	}
-	
+
+	@Override
 	public void setTime(final String time) {
-		  SwingUtilities.invokeLater(new Runnable() {
-		    @Override
-			public void run() {
-		      v.setTime(time);
-		    }
-		  });
+		if (v != null) {
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					v.setTime(time);
+				}
+			});
 		}
+	}
 
 }
