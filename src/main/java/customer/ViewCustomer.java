@@ -12,6 +12,7 @@ import java.util.Observer;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -36,6 +37,8 @@ public class ViewCustomer extends JFrame {
 	private JTable					table;
 
 	private ModelCustomer			m;
+	
+	private JLabel timeLabel;
 	
 	Observer plistObserver = new Observer() {
 		@Override
@@ -83,6 +86,8 @@ public class ViewCustomer extends JFrame {
 		buttons.setLayout(new FlowLayout(FlowLayout.CENTER));
 		buttons.add(new JButton("Buy"));
 		buttons.add(new JButton("Support Chat"));
+		timeLabel = new JLabel();
+		buttons.add(timeLabel);
 		right.add(buttons);
 		add(right);
 	}
@@ -108,6 +113,10 @@ public class ViewCustomer extends JFrame {
 
 	public int getEditingRow() {
 		return table.convertRowIndexToModel(table.getEditingRow());
+	}
+	
+	public void setTime(String time) {
+		timeLabel.setText(time);
 	}
 
 	public void setCurrentOrder(Order currentOrder) {

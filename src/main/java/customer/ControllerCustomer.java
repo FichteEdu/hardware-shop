@@ -13,19 +13,22 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
+import javax.swing.SwingUtilities;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
 import chat.Client;
 import shop.ModelShop;
+import time.TimeRequestThread;
+import time.TimeRequester;
 import customer.view.QuantityEvent;
 import customer.view.QuantityListener;
 import fpt.com.Order;
 import fpt.com.Product;
 
 
-public class ControllerCustomer implements ActionListener, QuantityListener {
+public class ControllerCustomer implements ActionListener, QuantityListener, TimeRequester {
 
 	private ViewCustomer	v;
 	private ModelCustomer	m;
@@ -39,6 +42,12 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 		} catch (IOException e1) {
 			System.out.println("Unable to connect to Warehouse. Please start the Warehouse first.");
 			System.exit(1);
+		}
+		try {
+			new TimeRequestThread(this).start();
+		} catch (SocketException e) {
+			e.printStackTrace();
+			System.out.println("Unable to start time request thread");
 		}
 
 		// Start IO threads
@@ -216,6 +225,19 @@ public class ControllerCustomer implements ActionListener, QuantityListener {
 
 		public void send(Object[] data) {
 			queue.add(data);
+		}
+	}
+
+	@Override
+	public void setTime(final String time) {
+		if (v != null) {
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					v.setTime(time);
+				}
+			});
 		}
 	}
 }
