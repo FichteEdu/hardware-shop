@@ -1,5 +1,6 @@
 package warehouse;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -95,6 +96,8 @@ class ReceiveOrderThread extends Thread {
 		} catch (SocketException e0) {
 			if (e0.getMessage().equals("Connection reset"))
 				out("Connection closed.");
+		} catch (EOFException e) {
+			out("Connection closed.");
 		} catch (IOException
 				| ClassNotFoundException e1) {
 			e1.printStackTrace();
