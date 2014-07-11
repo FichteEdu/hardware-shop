@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 
 public class ChatClient extends UnicastRemoteObject implements ClientService {
@@ -23,8 +24,15 @@ public class ChatClient extends UnicastRemoteObject implements ClientService {
 	private JTextArea textArea;
 
 	@Override
-	public void send(String s) {
-		textArea.setText(textArea.getText() + s + "\n");
+	public void send(final String s) {
+		// Update GUI async in GUI thread
+		SwingUtilities.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				textArea.append(s + "\n");
+			}
+		});
 	}
 
 	@Override

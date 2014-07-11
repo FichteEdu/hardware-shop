@@ -165,7 +165,15 @@ public class ControllerCustomer implements ActionListener, QuantityListener, Tim
 					if (input instanceof Order) {
 						Order order = (Order) input;
 						m.getOrders().add(1, order);
-						m.changed();
+
+						// Update GUI async in GUI thread
+						SwingUtilities.invokeLater(new Runnable() {
+
+							@Override
+							public void run() {
+								m.changed();
+							}
+						});
 					} else if (input instanceof String) {
 						String msg = (String) input;
 						JOptionPane.showMessageDialog(null, msg + "\n\nYour order has been lost.",
