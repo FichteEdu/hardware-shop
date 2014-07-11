@@ -10,11 +10,6 @@ import java.util.List;
 
 
 public class ChatServer extends UnicastRemoteObject implements ChatService {
-
-	protected ChatServer() throws RemoteException {
-		super();
-	}
-
 	/**
 	 * 
 	 */
@@ -22,20 +17,24 @@ public class ChatServer extends UnicastRemoteObject implements ChatService {
 	
 	private List<String> userlist = new ArrayList<String>();
 
+	protected ChatServer() throws RemoteException {
+		super();
+	}
+
 	@Override
-	public void login(String s) {
+	public synchronized void login(String s) {
 		userlist.add(s);
 	}
 
 	@Override
-	public void logout(String s) {
+	public synchronized void logout(String s) {
 		userlist.remove(s);
 	}
 
 	@Override
-	public void send(String s) {
+	public synchronized void send(String s) {
 		System.out.println("msg: " + s);
-		for(String ts : this.getUserList()) {
+		for(String ts : getUserList()) {
 			try {
 				ClientService cl = (ClientService) Naming.lookup(ts);
 				cl.send(s);
@@ -47,7 +46,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatService {
 	}
 
 	@Override
-	public List<String> getUserList() {
+	public synchronized List<String> getUserList() {
 		return userlist;
 	}
 
